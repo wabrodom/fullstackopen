@@ -1,24 +1,26 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
+import axios from 'axios'
 
 import FormToAddPeopleNumber from "./components/FormToAddPeopleNumber"
 import FilterByName from "./components/FilterByName"
 import PhoneBooks from "./components/PhoneBooks"
 
 const App = () => {
-  const [persons, setPersons] = useState([
-    { name: 'Arto Hellas', number: '040-123456', id: 1 },
-    { name: 'Ada Lovelace', number: '39-44-5323523', id: 2 },
-    { name: 'Dan Abramov', number: '12-43-234345', id: 3 },
-    { name: 'Mary Poppendieck', number: '39-23-6423122', id: 4 }
-  ]) 
-  const [newName, setNewName] = useState('')
-  const [newPhone, setNewPhone] = useState('')
-  const [searchName, setSearchName] = useState('')
+  const [persons, setPersons] = useState([]);
+  const [newName, setNewName] = useState('');
+  const [newPhone, setNewPhone] = useState('');
+  const [searchName, setSearchName] = useState('');
 
   const handleNameChange = (event) => setNewName(event.target.value);
   const handlePhoneChange = (event) => setNewPhone(event.target.value);
-  const handleSearchChange = (event => setSearchName(event.target.value))
+  const handleSearchChange = (event => setSearchName(event.target.value));
   
+  useEffect(() => {
+    const eventHandle = (response) => setPersons(response.data);
+    const promise = axios.get("http://localhost:3001/persons");
+
+    promise.then(eventHandle)
+  }, [])
 
   const addPerson = (event) => {
     event.preventDefault();
