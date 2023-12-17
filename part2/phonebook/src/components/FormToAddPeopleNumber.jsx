@@ -4,12 +4,14 @@ const FormToAddPeopleNumber = (props) => {
 
     return (
         <section>
-            <form onSubmit={handleSubmit}>
+            <form onSubmit={handleSubmit} name="FormToAddPeopleNumber">
 
                 <div>
                     name: <input 
                         onChange={handleNameChange}
                         value={newName}
+                        id="name"
+                        name="name"
                         />
                 </div>
 
@@ -17,6 +19,8 @@ const FormToAddPeopleNumber = (props) => {
                     number: <input
                         onChange={handlePhoneChange}
                         value={newPhone}
+                        id="phoneNumber"
+                        name="phoneNumber"
                         type="tel"
                         required
                     />

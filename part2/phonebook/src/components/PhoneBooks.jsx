@@ -1,13 +1,17 @@
 import PersonNameAndNumber from "./PersonNameAndNumber"
 
-const PhoneBooks = ({persons}) => {
+const PhoneBooks = ({persons, handleDelete}) => {
     return (
       <div>
         
         <ul>
           {persons.map(object => {
             return (
-              <PersonNameAndNumber key={object.id} object={object} />
+              <PersonNameAndNumber 
+                key={object.id} 
+                object={object} 
+                handleDelete={handleDelete}
+              />
             )
           })
         }
