@@ -5,12 +5,14 @@ import phonebookServices from "./services/phonebook"
 import FormToAddPeopleNumber from "./components/FormToAddPeopleNumber"
 import FilterByName from "./components/FilterByName"
 import PhoneBooks from "./components/PhoneBooks"
+import Notification from './components/Notification'
 
 const App = () => {
   const [persons, setPersons] = useState([]);
   const [newName, setNewName] = useState('');
   const [newPhone, setNewPhone] = useState('');
   const [searchName, setSearchName] = useState('');
+  const [notifaction, setNotification] = useState(null);
 
   const handleNameChange = (event) => setNewName(event.target.value);
   const handlePhoneChange = (event) => setNewPhone(event.target.value);
@@ -44,6 +46,13 @@ const App = () => {
         .update(id, updatePhone)
         .then( returnedPerson => { 
           setPersons(persons.map(p => p.id !== id ? p : returnedPerson) )
+          return returnedPerson
+        })
+        .then(returnedPerson => {
+          setNotification(`Updated ${returnedPerson.name}'s number.`)
+          setTimeout(()=> {
+            setNotification(null)
+          }, 3000)
         })
       }
       setNewName('');
@@ -55,8 +64,16 @@ const App = () => {
       .create(personObject)
       .then(returnedPerson => {
         setPersons(persons.concat(returnedPerson))
+      
         setNewName('');
         setNewPhone('');
+        return returnedPerson
+      })
+      .then(returnedPerson => {
+        setNotification(`Added ${returnedPerson.name}.`)
+        setTimeout(()=> {
+          setNotification(null)
+        }, 3000)
       })
   }
 
@@ -82,8 +99,9 @@ const App = () => {
   return (
     <div>
 
-      <h2>Phonebook</h2>
+      <h1>Phonebook</h1>
 
+      <Notification message={notifaction} />
       <FilterByName 
         handleChange={handleSearchChange}
         searchName={searchName}
@@ -102,6 +120,8 @@ const App = () => {
     </div>
   )
 }
+
+
 
 
 export default App
