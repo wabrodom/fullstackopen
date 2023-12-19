@@ -13,6 +13,7 @@ const App = () => {
   const [newPhone, setNewPhone] = useState('');
   const [searchName, setSearchName] = useState('');
   const [notifaction, setNotification] = useState(null);
+  const [notificationStyle, setNotificationStyle] = useState(null)
 
   const handleNameChange = (event) => setNewName(event.target.value);
   const handlePhoneChange = (event) => setNewPhone(event.target.value);
@@ -50,11 +51,24 @@ const App = () => {
         })
         .then(returnedPerson => {
           setNotification(`Updated ${returnedPerson.name}'s number.`)
+          setNotificationStyle("success")
           setTimeout(()=> {
             setNotification(null)
           }, 3000)
+          return returnedPerson
+        })
+        .catch(error => {
+          setNotification(`${foundPerson.name} is already deleted from the list`)
+          setNotificationStyle("failure")
+          // console.log(error)
+          setTimeout(() => {
+            setNotification(null)
+            setPersons(persons.filter(p => p.id !== id))
+          }, 5000)
+
         })
       }
+
       setNewName('');
       setNewPhone('');
       return;
@@ -71,6 +85,7 @@ const App = () => {
       })
       .then(returnedPerson => {
         setNotification(`Added ${returnedPerson.name}.`)
+        setNotificationStyle("success")
         setTimeout(()=> {
           setNotification(null)
         }, 3000)
@@ -101,7 +116,7 @@ const App = () => {
 
       <h1>Phonebook</h1>
 
-      <Notification message={notifaction} />
+      <Notification message={notifaction} style={notificationStyle} />
       <FilterByName 
         handleChange={handleSearchChange}
         searchName={searchName}

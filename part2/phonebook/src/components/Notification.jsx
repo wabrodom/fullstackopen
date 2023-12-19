@@ -1,8 +1,7 @@
-const Notification = (props) => {
-    const message = props.message;
+const Notification = ({message, style}) => {
     if (message === null) return;
     return (
-      <div className="alert">
+      <div className={style}>
         {message}
       </div>
     )

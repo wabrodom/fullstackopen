@@ -2,12 +2,23 @@ h1 {
     font-style: italic; 
 }
 
-.alert {
-    color: blue;
+.failure {
+    color: red;
     background: lightgrey;
     font-size: 20px;
     border-style: solid;
     border-radius: 5px;
     padding: 10px;
     margin-bottom: 10px;
-  }
+}
+
+.success {
+    color: blue;
+    background: yellow;
+    font-size: 20px;
+    font-style:oblique;
+    border-style: solid;
+    border-radius: 5px;
+    padding: 10px;
+    margin-bottom: 10px;
+}
