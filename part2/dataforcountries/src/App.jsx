@@ -8,11 +8,12 @@ const App = () => {
     const [value, setValue] = useState('')
     const [matchCountries, setMatchCountries] = useState([]);
     const [tooMuchMatched, setTooMuchMatched] = useState(null);
-
+    const [show, setShow] = useState(Array(matchCountries.length).fill(false))
 
     useEffect(() => {
         axios.get(`https://studies.cs.helsinki.fi/restcountries/api/all`)
             .then(response => {
+                console.log('promise fulfiled')
                 setCountries(response.data)
             })
         
@@ -29,6 +30,7 @@ const App = () => {
             grabTenCountries(currentValue)
         } else {
             setMatchCountries([])
+            setShow([])
         }
     }
 
@@ -37,19 +39,25 @@ const App = () => {
             const nameLowerCase = obj.name.common.toLowerCase()
             return nameLowerCase.includes(input.toLowerCase())
         } ) || [];
-// pay attention to this
+            // pay attention to this, in some case if fetch really fail countrie could be null
 
         if (filteredCountries.length > 10) {
             setTooMuchMatched("Too many matches, specify another filter")
             setMatchCountries([])
+            setShow([])
             return;
         } else {
             setTooMuchMatched(null)
             setMatchCountries(filteredCountries);
+            setShow(Array(filteredCountries.length).fill(false))
         }
     } 
 
-
+    const toggleShow = (index) => {
+        const copyShowArr = [...show]
+        copyShowArr[index] = !copyShowArr[index]
+        setShow(copyShowArr)
+    }
 
     return (
         <div>
@@ -62,6 +70,8 @@ const App = () => {
             <DisplayCountries 
                 message={tooMuchMatched} 
                 matchCountries={matchCountries}
+                handleClick={toggleShow}
+                show={show}
             />
         </div>
     )
