@@ -1,44 +1,47 @@
 
-import ShowOneCountryData from "./ShowOneCountryData";
+import ShowOneCountryData from "./ShowOneCountryData"
 
 const DisplayCountries = (props) => {
     const matchCountries = props.matchCountries
-    const handleClick  = props.handleClick;
     const show = props.show;
+    const handleClick = props.handleClick;
+    const weather = props.weather;
 
-    const useData = matchCountries.map(obj => { 
-        return ( [obj.name.common, obj.ccn3] )
-    })
-  
+    // first render of App component, countryWeather state is not change so it is null, anything use this props will break
+    // when event occur in subcomponent, attach function run, state of parent component change -> App will rerender
 
-    const oneCountryData = (name) => {
-        const country = matchCountries.find(obj => obj.name.common === name)
-        return country
-    }   
-    
+    if (weather === null) {
+        console.log(" weather is null")
+        return null;
+    } 
+
     if (matchCountries.length === 1) {
+
         return (
-            <ShowOneCountryData country={matchCountries[0]}/>
+            <ShowOneCountryData 
+                country={matchCountries[0]} 
+                weather={weather}
+            />
         ) 
     }
 
     
     return (
         <section> 
+            {console.log("inside 2.DisplayCountries")}
             <p>{props.message}</p> 
             <ul>
-              {useData.map((country, index) => (
-                <li key={country[1]}>
-                    {country[0]}
+              {matchCountries.map((country, index) => (
+                <li key={country.ccn3}>
+                    {country.name.common}
 
-                    <button onClick={() => handleClick(index)}>
+                    <button onClick={() => handleClick(index, country)}>
                         {show[index] ? "hide": "show"}
                     </button>
 
                     {show[index]
-                        ? <ShowOneCountryData country={oneCountryData(country[0])}/> 
-                        : null
-                    }   
+                        ? <ShowOneCountryData country={country} weather={weather}/> 
+                        : null}
                 </li>
               ))}
             </ul> 

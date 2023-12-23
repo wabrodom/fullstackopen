@@ -3,17 +3,19 @@ import axios from 'axios'
 
 import DisplayCountries from './components/DisplayCountries';
 
+const api_key = import.meta.env.VITE_WEATHER_Key;
+
 const App = () => {
     const [countries, setCountries] = useState(null);
     const [value, setValue] = useState('')
     const [matchCountries, setMatchCountries] = useState([]);
     const [tooMuchMatched, setTooMuchMatched] = useState(null);
     const [show, setShow] = useState(Array(matchCountries.length).fill(false))
+    const [countryWeather, setCountryWeather] = useState(null);
 
     useEffect(() => {
         axios.get(`https://studies.cs.helsinki.fi/restcountries/api/all`)
             .then(response => {
-                console.log('promise fulfiled')
                 setCountries(response.data)
             })
         
@@ -34,13 +36,31 @@ const App = () => {
         }
     }
 
+    const getWeather = (city) => {
+        const firstPartUrl = 'https://api.openweathermap.org/data/2.5/weather';
+   
+        axios.get(`${firstPartUrl}?q=${city}&appid=${api_key}`)
+            .then(response => {
+                setCountryWeather(response.data)
+            })
+
+    }
+    
     const grabTenCountries = (input) => {
         const filteredCountries = countries.filter(obj => {
             const nameLowerCase = obj.name.common.toLowerCase()
             return nameLowerCase.includes(input.toLowerCase())
-        } ) || [];
-            // pay attention to this, in some case if fetch really fail countrie could be null
+        } ) ;
+        // in case of server not resolve so cant get response.data === typeof array ? safe null
+        
+        if (filteredCountries.length === 1) {
+            setTooMuchMatched(null)
+            setMatchCountries(filteredCountries);
+            setShow(new Array(filteredCountries.length).fill(false))
 
+            const capitalCity = filteredCountries[0].capital[0];
+            getWeather(capitalCity)
+        }
         if (filteredCountries.length > 10) {
             setTooMuchMatched("Too many matches, specify another filter")
             setMatchCountries([])
@@ -49,18 +69,28 @@ const App = () => {
         } else {
             setTooMuchMatched(null)
             setMatchCountries(filteredCountries);
-            setShow(Array(filteredCountries.length).fill(false))
+            setShow(new Array(filteredCountries.length).fill(false))
         }
     } 
 
-    const toggleShow = (index) => {
-        const copyShowArr = [...show]
-        copyShowArr[index] = !copyShowArr[index]
-        setShow(copyShowArr)
+ 
+
+
+    const toggleShow = (index, countryObject) => {
+        console.log("Toggle show")
+        const copyShow = [...show]
+        const capitalName = countryObject.capital[0]
+        copyShow[index] = !copyShow[index]
+        setShow(copyShow)
+
+        getWeather(capitalName)
     }
+
+  
 
     return (
         <div>
+            {console.log("inside 1.App")}
             <p>find countries 
                 <input 
                     onChange={handleChange } 
@@ -70,8 +100,9 @@ const App = () => {
             <DisplayCountries 
                 message={tooMuchMatched} 
                 matchCountries={matchCountries}
-                handleClick={toggleShow}
                 show={show}
+                handleClick={toggleShow}
+                weather={countryWeather}
             />
         </div>
     )
