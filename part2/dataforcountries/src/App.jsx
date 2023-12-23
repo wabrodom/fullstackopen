@@ -47,7 +47,7 @@ const App = () => {
     }
     
     const grabTenCountries = (input) => {
-        const filteredCountries = countries.filter(obj => {
+        const filteredCountries = (countries ?? []).filter(obj => {
             const nameLowerCase = obj.name.common.toLowerCase()
             return nameLowerCase.includes(input.toLowerCase())
         } ) ;
