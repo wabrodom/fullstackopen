@@ -3,7 +3,7 @@ import axios from 'axios'
 
 import DisplayCountries from './components/DisplayCountries';
 
-const api_key = import.meta.env.VITE_WEATHER_Key;
+const WEATHER_API_KEY = import.meta.env.VITE_WEATHER_API_KEY;
 
 const App = () => {
     const [countries, setCountries] = useState(null);
@@ -39,7 +39,7 @@ const App = () => {
     const getWeather = (city) => {
         const firstPartUrl = 'https://api.openweathermap.org/data/2.5/weather';
    
-        axios.get(`${firstPartUrl}?q=${city}&appid=${api_key}`)
+        axios.get(`${firstPartUrl}?q=${city}&appid=${WEATHER_API_KEY}`)
             .then(response => {
                 setCountryWeather(response.data)
             })
