@@ -90,6 +90,15 @@ const App = () => {
           setNotification(null)
         }, 3000)
       })
+      .catch(error => {
+        setNotification(error.response.data.error)
+        setNotificationStyle("failure")
+        setTimeout(()=> {
+          setNotification(null)
+          setNewName('');
+          setNewPhone('');
+        }, 3000)
+      })
   }
 
   const searchedPerson = searchName === ''? persons : persons.filter(obj => {
