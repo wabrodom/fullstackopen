@@ -58,14 +58,21 @@ const App = () => {
           return returnedPerson
         })
         .catch(error => {
+          if (error.response.data.name === "ValidationError") {
+            setNotification(error.response.data.error)
+            setNotificationStyle("failure")
+            setTimeout(()  => {
+              setNotification(null)
+            }, 5000)
+            return;
+          }
           setNotification(`${foundPerson.name} is already deleted from the list`)
           setNotificationStyle("failure")
-          // console.log(error)
           setTimeout(() => {
             setNotification(null)
             setPersons(persons.filter(p => p.id !== id))
           }, 5000)
-
+          return error;
         })
       }
 
@@ -88,7 +95,7 @@ const App = () => {
         setNotificationStyle("success")
         setTimeout(()=> {
           setNotification(null)
-        }, 3000)
+        }, 5000)
       })
       .catch(error => {
         setNotification(error.response.data.error)
@@ -97,7 +104,7 @@ const App = () => {
           setNotification(null)
           setNewName('');
           setNewPhone('');
-        }, 3000)
+        }, 5000)
       })
   }
 
