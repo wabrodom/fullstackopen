@@ -27,8 +27,71 @@ const favoriteBlog = (blogs) => {
   return mostLike
 }
 
+const mostBlogs = (blogs) => {
+  if (blogs.length < 1) {
+    return {}
+  }
+  const map = new Map()
+  const maxBlogAuthor = {
+    author: '',
+    blogs: 0
+  }
+
+  for (const blog of blogs) {
+    const {author} = blog
+    const currentCount = map.get(author) || 0
+
+    map.set(author, currentCount + 1)
+  }
+
+  const itertorAuthor = map.entries()
+
+  for (let i = 0; i < map.size; i++) {
+    const [author, blogs] = itertorAuthor.next().value
+
+    if (blogs > maxBlogAuthor.blogs) {
+      maxBlogAuthor.author = author
+      maxBlogAuthor.blogs = blogs
+    }
+  }
+
+  return maxBlogAuthor
+}
+
+const mostLikes = (blogs) => {
+  if (blogs.length < 1) {
+    return {}
+  }
+  const map = new Map()
+  const mostLikesAuthor = {
+    author: '',
+    likes: 0
+  }
+
+  for (let i = 0; i < blogs.length; i++) {
+    const {author, likes} = blogs[i]
+    const currentLikes = map.get(author) || 0
+    
+    map.set(author, currentLikes + likes)
+  }
+  const authorAndLikes = [...map.entries()] 
+
+  for (let i = 0; i < authorAndLikes.length; i++) {
+    const [currAuthor, currLikes] = authorAndLikes[i]
+    console.log(currAuthor, currLikes)
+    if (currLikes > mostLikesAuthor.likes) {
+      mostLikesAuthor.author = currAuthor
+      mostLikesAuthor.likes = currLikes
+    }
+  }
+
+  return mostLikesAuthor
+}
+
 module.exports = {
   dummy,
   totalLikes,
-  favoriteBlog
+  favoriteBlog,
+  mostBlogs,
+  mostLikes
 }

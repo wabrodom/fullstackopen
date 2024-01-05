@@ -1,54 +1,6 @@
-const totalLikes = require('../utils/list_helper').totalLikes
+const mostBlogs = require('../utils/list_helper').mostBlogs
 
-describe('total likes', () => {
-  const listWithOneBlog = [
-    {
-      _id: '5a422aa71b54a676234d17f8',
-      title: 'Go To Statement Considered Harmful',
-      author: 'Edsger W. Dijkstra',
-      url: 'http://www.u.arizona.edu/~rubinson/copyright_violations/Go_To_Considered_Harmful.html',
-      likes: 5,
-      __v: 0
-    }
-  ]
-
-  test('when list has only one blog, equals the likes of that', () => {
-    const result = totalLikes(listWithOneBlog)
-    expect(result).toBe(5)
-  })
-
-  const listWithThreeBlog = [
-    {
-      _id: '1',
-      title: 'Go go',
-      author: 'Edgar',
-      url: 'http://',
-      likes: 5,
-      __v: 0
-    },
-    {
-      _id: '2',
-      title: 'Go go',
-      author: 'Edgar',
-      url: 'http://',
-      likes: 10,
-      __v: 0
-    },
-    {
-      _id: '3',
-      title: 'Go go',
-      author: 'Edgar',
-      url: 'http://',
-      likes: 35,
-      __v: 0
-    },
-  ]
-
-  test('when list has 3 blog, with likes of [5, 10, 35]', () => {
-    const result = totalLikes(listWithThreeBlog)
-    expect(result).toBe(50)
-  })
-
+describe('author of most blogs', () => {
   const blogs = [
     {
       _id: "5a422a851b54a676234d17f7",
@@ -100,10 +52,35 @@ describe('total likes', () => {
     }  
   ]
 
-  test('when have many blogs, the likes are [7, 5, 12, 10, 0, 2] expect(result).toBe(36)', () => {
-    const result = totalLikes(blogs)
-    expect(result).toBe(36)
+  test(`in case of ${blogs.length} blog object`, () => {
+    const result = mostBlogs(blogs)
+    expect(result).toEqual(
+      {
+        author: "Robert C. Martin",
+        blogs: 3
+      }
+    )
   })
 
+  test(`in case of 1 blog object`, () => {
+    const result = mostBlogs(
+      [
+        {
+          _id: "5a422bc61b54a676234d17fc",
+          title: "Type wars",
+          author: "Robert C. Martin",
+          url: "http://blog.cleancoder.com/uncle-bob/2016/05/01/TypeWars.html",
+          likes: 2,
+          __v: 0
+        },
+      ]
+    )
+    expect(result).toEqual(
+      {
+        author: "Robert C. Martin",
+        blogs: 1
+      }
+    )
+  })
 
 })
