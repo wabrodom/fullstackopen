@@ -1,4 +1,4 @@
-const dummy = (blogs) => {
+const dummy = () => {
   return 1
 }
 
@@ -7,14 +7,14 @@ const sum = (array) => {
 }
 
 const totalLikes = (blogs) => {
-  const likes = blogs.map(blog => blog.likes);
+  const likes = blogs.map(blog => blog.likes)
   return sum(likes)
 }
 
 const favoriteBlog = (blogs) => {
-  const mostLike = {  
-    title: "",
-    author: "",
+  const mostLike = {
+    title: '',
+    author: '',
     likes: 0
   }
   for (const blog of blogs) {
@@ -38,7 +38,7 @@ const mostBlogs = (blogs) => {
   }
 
   for (const blog of blogs) {
-    const {author} = blog
+    const { author } = blog
     const currentCount = map.get(author) || 0
 
     map.set(author, currentCount + 1)
@@ -69,12 +69,12 @@ const mostLikes = (blogs) => {
   }
 
   for (let i = 0; i < blogs.length; i++) {
-    const {author, likes} = blogs[i]
+    const { author, likes } = blogs[i]
     const currentLikes = map.get(author) || 0
-    
+
     map.set(author, currentLikes + likes)
   }
-  const authorAndLikes = [...map.entries()] 
+  const authorAndLikes = [...map.entries()]
 
   for (let i = 0; i < authorAndLikes.length; i++) {
     const [currAuthor, currLikes] = authorAndLikes[i]
