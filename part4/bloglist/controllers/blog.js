@@ -20,8 +20,8 @@ blogRouter.get('/:id', async (request, response, next) => {
   }
 })
 
-blogRouter.post('/', async (request, response) => {
-  const {title, author, url, likes = 0} = request.body
+blogRouter.post('/', async (request, response, next) => {
+  const { title, author, url, likes = 0 } = request.body
   const newBlog = new Blog({
     title,
     author,
@@ -31,7 +31,7 @@ blogRouter.post('/', async (request, response) => {
 
   try {
     const savedBlog = await newBlog.save()
-  
+
     response.statusCode = 201
     response.json(savedBlog)
   } catch(exception) {

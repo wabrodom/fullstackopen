@@ -80,13 +80,31 @@ test('if like missing in the request.body it default value will be 0', async () 
     .expect(201)
     .expect('Content-Type', /application\/json/)
 
-    const blogsAtEnd = await helper.blogsInDb()
-    const lastBlog = blogsAtEnd[blogsAtEnd.length -1]
-    
-    expect(lastBlog.title).toEqual('Type wars')
-    expect(lastBlog.likes).toEqual(0)
+  const blogsAtEnd = await helper.blogsInDb()
+  const lastBlog = blogsAtEnd[blogsAtEnd.length -1]
+
+  expect(lastBlog.title).toEqual('Type wars')
+  expect(lastBlog.likes).toEqual(0)
 })
 
+test('if the title or url properties are missing, get code 400 Bad Request', async () => {
+  const noTitleBlog = {
+    author: 'Robert C. Martin',
+    url: 'http://blog.cleancoder.com/uncle-bob/2016/05/01/TypeWars.html',
+  }
+  const noUrlBlog = {
+    title: 'Type wars',
+    author: 'Robert C. Martin',
+  }
+
+  await api.post('/api/blogs')
+    .send(noTitleBlog)
+    .expect(400)
+
+  await api.post('/api/blogs')
+    .send(noUrlBlog)
+    .expect(400)
+})
 
 
 afterAll(async () => {
