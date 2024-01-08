@@ -58,7 +58,7 @@ test('a valid blog can be added' ,async () => {
     .expect('Content-Type', /application\/json/)
 
   const response = await api.get('/api/blogs')
-  console.log(response.body)
+  // console.log(response.body)
   const titles = response.body.map(blog => blog.title)
 
   expect(response.body).toHaveLength(helper.initialBlogs.length + 1)
@@ -67,6 +67,27 @@ test('a valid blog can be added' ,async () => {
   )
 
 })
+
+test('if like missing in the request.body it default value will be 0', async () => {
+  const newBlog = {
+    title: 'Type wars',
+    author: 'Robert C. Martin',
+    url: 'http://blog.cleancoder.com/uncle-bob/2016/05/01/TypeWars.html',
+  }
+
+  await api.post('/api/blogs')
+    .send(newBlog)
+    .expect(201)
+    .expect('Content-Type', /application\/json/)
+
+    const blogsAtEnd = await helper.blogsInDb()
+    const lastBlog = blogsAtEnd[blogsAtEnd.length -1]
+    
+    expect(lastBlog.title).toEqual('Type wars')
+    expect(lastBlog.likes).toEqual(0)
+})
+
+
 
 afterAll(async () => {
   await mongoose.connection.close()
