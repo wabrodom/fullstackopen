@@ -14,6 +14,18 @@ const initialBlogs = [
   },
 ]
 
+const nonExistingId = async () => {
+  const note = new Blog( {
+    title: '100 Tips for a Better Life',
+    author: 'Conor Barnes',
+    url: 'https://www.lesswrong.com/posts/7hFeMWC6Y5eaSixbD/100-tips-for-a-better-life/'
+  })
+  await note.save()
+  await note.deleteOne()
+
+  return note._id.toString()
+}
+
 const blogsInDb = async () => {
   const blogs = await Blog.find({})
   return blogs.map(blog => blog.toJSON())
@@ -21,5 +33,6 @@ const blogsInDb = async () => {
 
 module.exports = {
   initialBlogs,
+  nonExistingId,
   blogsInDb,
 }

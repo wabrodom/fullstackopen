@@ -38,15 +38,30 @@ blogRouter.post('/', async (request, response, next) => {
     next(exception)
   }
 
-  /* .promise style
-    const blog = new Blog(request.body)
-
-    blog
-      .save()
-      .then(result => {
-        response.status(201).json(result)
-      })
-  */
 })
+
+blogRouter.delete('/:id', async (request, response) => {
+  await Blog.findByIdAndRemove(request.params.id)
+  response.status(204).end()
+})
+
+blogRouter.put('/:id', async (request, response, next) => {
+  const { title, author, url, likes } = request.body
+  try {
+    const newBlogInfo = {
+      title,
+      author,
+      url,
+      likes
+    }
+    const newBlog = await Blog
+      .findByIdAndUpdate(
+        request.params.id, newBlogInfo, { new: true, runValidators: true })
+    response.json(newBlog)
+  } catch(exception) {
+    next(exception)
+  }
+})
+
 
 module.exports = blogRouter
