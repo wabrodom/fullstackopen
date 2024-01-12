@@ -22,7 +22,7 @@ describe('when there is one user in db', () => {
 
   })
 
-  test('creation succeed with new Unique username' , async () => {
+  test('creation succeed with new username' , async () => {
     const usersAtStart = await helper.usersInDb()
 
     const newUser = {
@@ -42,7 +42,41 @@ describe('when there is one user in db', () => {
     const usernames = usersAtEnd.map(u => u.username)
     expect(usernames).toContain(newUser.username)
   })
+
+  test('POST request to add user that invalid form will get 400 Bad request', async () => {
+    const usersAtStart = await helper.usersInDb()
+
+    const usernameShort = {
+      username: 'bo',
+      name: 'bombom',
+      password: '123',
+    }
+
+    const passwordShort = {
+      username: 'bom',
+      name: 'bombom',
+      password: '12',
+    }
+
+    await api.post('/api/users')
+      .send(usernameShort)
+      .expect(400)
+
+    await api.post('/api/users')
+      .send(passwordShort)
+      .expect(400)
+
+    const usersAtEnd = await helper.usersInDb()
+    expect(usersAtEnd).toHaveLength(usersAtStart.length)
+
+    const usernames = usersAtEnd.map(u => u.username)
+    expect(usernames).not.toContain(usernameShort.username)
+    expect(usernames).not.toContain(passwordShort.username)
+  })
+
 })
+
+
 
 
 afterAll(async () => {
