@@ -16,12 +16,15 @@ const errorHandler = (error, request, response, next) => {
   logger.error(error.message)
 
   if(error.name === 'CastError') {
-    response.status(400).send({ error : 'malformatted id' })
+    return response.status(400).send({ error : 'malformatted id' })
   } else if (error.name === 'ValidationError') {
-    response.status(400).send({ error : error.message })
+    return response.status(400).send({ error : error.message })
+  } else if (error.name === 'JsonWebTokenError') {
+    return response.status(401).json({
+      error: error.message
+    })
   }
-  logger.info('begin>>',error, '<<end')
-  console.log(error.name)
+  logger.info('begin >>', error, '<< end')
   next(error)
 }
 

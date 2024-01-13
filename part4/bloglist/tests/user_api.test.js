@@ -4,7 +4,8 @@ const helper = require('./test_helper')
 const app = require('../app')
 const api = supertest(app)
 const bcrypt = require('bcrypt')
-const User = require('../models/user')
+const User = require('../models/user');
+const { application } = require('express');
 
 describe('when there is one user in db', () => {
 
@@ -76,6 +77,67 @@ describe('when there is one user in db', () => {
 
 })
 
+
+describe('when user have valid token or invalid token', () => {
+  beforeEach( async () => {
+    await User.deleteMany({})
+
+    const passwordHash = await bcrypt.hash('somePassword', 10)
+    const user = new User({
+      username: 'root',
+      name: 'root',
+      passwordHash
+    })
+
+    await user.save()
+  })
+
+  test('no token in authorization header' , async() => {
+    const newBlog = {
+      "title": "user not have token in header",
+      "author": "bombom",
+      "url": "https://adamgrant.net/"
+    }
+
+    await api.post('/api/blogs')
+      .send(newBlog)
+      .expect(401)
+      .expect('Content-Type', /application\/json/)
+  })
+
+  test('user have valid token in header', async () => {
+    const userLogin = {
+      username: 'root',
+      password: 'somePassword'
+    }
+
+    const userObjectWithToken = await api
+      .post('/api/login')
+      .send(userLogin)
+      .expect(200)
+      .expect('Content-Type', /application\/json/)
+
+    const newBlog = {
+      "title": "have valid token in header",
+      "author": "bombom",
+      "url": "https://adamgrant.net/"
+    }
+
+    const authorizationStr =  'bearer ' + userObjectWithToken.body.token
+
+    await api
+      .post('/api/blogs')
+      .set({ Authorization: authorizationStr})
+      .send(newBlog)
+      .expect(201)
+      .expect('Content-Type', /application\/json/)
+    
+    const blogsAtEnd = await helper.blogsInDb()
+    const titles = blogsAtEnd.map(b => b.title)
+    expect(titles).toContain('have valid token in header')
+  })
+
+})
 
 
 

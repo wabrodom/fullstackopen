@@ -1,11 +1,11 @@
 POST http://localhost:3001/api/blogs/
-Content-Type: application/json 
+Content-Type: application/json
+Authorization: beaRer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6Im1vbW8iLCJpZCI6IjY1YTI1NThjYjYyOTY0NDBhMWQ2MzYzNCIsImlhdCI6MTcwNTE0MTYyM30.Gj6A0148klpNRAbT3_caW1GminSru_SF3QVvB2yABZA
 
 {
- "title": "Think again",
+  "title": "bearer again",
   "author": "adamgrant",
-  "url": "https://adamgrant.net/",
-  "userId": "65a090a1d58e164b0b72dba0"
+  "url": "https://adamgrant.net/"
 }
 
 ###
