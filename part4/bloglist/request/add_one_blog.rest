@@ -2,7 +2,31 @@ POST http://localhost:3001/api/blogs/
 Content-Type: application/json 
 
 {
-  "title": "Test again again",
+ "title": "Think again",
+  "author": "adamgrant",
+  "url": "https://adamgrant.net/",
+  "userId": "65a090a1d58e164b0b72dba0"
+}
+
+###
+POST http://localhost:3001/api/blogs/
+Content-Type: application/json
+
+{
+  "title": "React patterns",
+  "author": "Michael Chan",
+  "url": "https://reactpatterns.com/",
+  "userId": "65a1f414d86766f08ef91023"
+}
+
+
+###
+POST http://localhost:3001/api/blogs/
+Content-Type: application/json
+
+{
+  "title": "not found user._id",
   "author": "bombom",
-  "url": "https://wabrodom.netlify.app/"
+  "url": "https://reactpatterns.com/",
+  "userId": "65a1f414d86766f08ef91025"
 }
