@@ -1,4 +1,5 @@
 const logger = require('./logger')
+const helper = require('./helper')
 
 const requestLogger = (request, response, next) => {
   logger.info('Method:', request.method)
@@ -10,6 +11,11 @@ const requestLogger = (request, response, next) => {
 
 const unknownEndpoint = (request, response) => {
   response.status(404).send({ error: 'unknown endpoint' })
+}
+
+const tokenExtracter = (request, response ,next) => {
+  request.token = helper.getTokenFrom(request)
+  next()
 }
 
 const errorHandler = (error, request, response, next) => {
@@ -31,5 +37,6 @@ const errorHandler = (error, request, response, next) => {
 module.exports = {
   requestLogger,
   unknownEndpoint,
+  tokenExtracter,
   errorHandler,
 }

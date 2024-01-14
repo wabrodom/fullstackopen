@@ -38,10 +38,9 @@ blogsRouter.post('/', async (request, response, next) => {
   const { title, author, url, likes = 0 } = request.body
 
   try {
-    const decodedToken = jwt.verify(getTokenFrom(request), process.env.SECRET)
-    console.log('decodedToken',decodedToken)
+    const decodedToken = jwt.verify(request.token, process.env.SECRET)
     if (!decodedToken.id) {
-      //jwt.verify -> if invalid it will be called with the error. (401)
+      // jwt.verify -> if invalid it will be called with the error. (401)
       // so it will not reach here
       return response.status(401).json({ error: 'token invalid...' })
     }
