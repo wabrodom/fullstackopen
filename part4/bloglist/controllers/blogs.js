@@ -3,16 +3,6 @@ const Blog = require('../models/blog')
 const User = require('../models/user')
 const jwt = require('jsonwebtoken')
 
-const getTokenFrom = (request) => {
-  const authorization = request.get('authorization')
-  const regex = /Bearer /i
-  if (authorization && authorization.match(regex)) {
-    const newString = authorization.replace(regex, '')
-    return newString
-  }
-  return null
-}
-
 
 blogsRouter.get('/', async (request, response, next) => {
   try {
@@ -75,8 +65,35 @@ blogsRouter.post('/', async (request, response, next) => {
 })
 
 blogsRouter.delete('/:id', async (request, response) => {
-  await Blog.findByIdAndRemove(request.params.id)
-  response.status(204).end()
+  
+  try {
+    const decodedToken = jwt.verify(request.token, process.env.SECRET)
+    if (!decodedToken.id) {
+      return response.status(401).json({error: 'invalid token...'})
+    }
+
+    const user = await User.findById(decodedToken.id)
+
+    if (user === null) {
+      return response.status(400).json({
+        error: 'Bad request. The user id is not found.'
+      })
+    }
+
+    const deleteBlog = await Blog.findByIdAndRemove(request.params.id)
+
+    user.blogs = user.blogs.filter(blogId =>  {
+      console.log(blogId)
+      return blogId.toString() !== deleteBlog._id.toString()
+    })
+    
+    await user.save()
+
+    response.status(204).end()
+  } catch(exception) {
+    next(exception)
+  }
+
 })
 
 blogsRouter.put('/:id', async (request, response, next) => {
