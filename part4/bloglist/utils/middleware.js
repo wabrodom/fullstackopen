@@ -18,6 +18,11 @@ const tokenExtracter = (request, response ,next) => {
   next()
 }
 
+const userExtracter =  async (request, response, next) => {
+  request.user = await helper.decodedTokenGetUser(request, response)
+  next()
+}
+
 const errorHandler = (error, request, response, next) => {
   logger.error(error.message)
 
@@ -38,5 +43,6 @@ module.exports = {
   requestLogger,
   unknownEndpoint,
   tokenExtracter,
+  userExtracter,
   errorHandler,
 }

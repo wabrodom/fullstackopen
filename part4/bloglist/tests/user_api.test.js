@@ -106,7 +106,7 @@ describe('when user have valid token or invalid token', () => {
   }
   
 
-  test('no token in authorization header will 401' , async() => {
+  test('no token or null in authorization header will 401' , async() => {
     const newBlog = {
       "title": "user not have token in header",
       "author": "bombom",

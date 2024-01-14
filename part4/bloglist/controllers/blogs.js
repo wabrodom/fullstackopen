@@ -1,6 +1,5 @@
 const blogsRouter = require('express').Router()
 const Blog = require('../models/blog')
-const User = require('../models/user')
 const jwt = require('jsonwebtoken')
 
 
@@ -28,14 +27,8 @@ blogsRouter.post('/', async (request, response, next) => {
   const { title, author, url, likes = 0 } = request.body
 
   try {
-    const decodedToken = jwt.verify(request.token, process.env.SECRET)
-    if (!decodedToken.id) {
-      // jwt.verify -> if invalid it will be called with the error. (401)
-      // so it will not reach here
-      return response.status(401).json({ error: 'token invalid...' })
-    }
-    const user = await User.findById(decodedToken.id)
-    
+    const user = request.user
+
     if (user === null) {
       return response.status(400).json({
         error: 'the user id is not found.'
@@ -67,12 +60,7 @@ blogsRouter.post('/', async (request, response, next) => {
 blogsRouter.delete('/:id', async (request, response) => {
   
   try {
-    const decodedToken = jwt.verify(request.token, process.env.SECRET)
-    if (!decodedToken.id) {
-      return response.status(401).json({error: 'invalid token...'})
-    }
-
-    const user = await User.findById(decodedToken.id)
+    const user = request.user
 
     if (user === null) {
       return response.status(400).json({
@@ -83,7 +71,7 @@ blogsRouter.delete('/:id', async (request, response) => {
     const deleteBlog = await Blog.findByIdAndRemove(request.params.id)
 
     user.blogs = user.blogs.filter(blogId =>  {
-      console.log(blogId)
+      // console.log('blogs array store blogId as id object',blogId)
       return blogId.toString() !== deleteBlog._id.toString()
     })
     
