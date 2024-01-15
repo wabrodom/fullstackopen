@@ -4,17 +4,48 @@ const helper = require('./test_helper')
 const app = require('../app')
 const api = supertest(app)
 const Blog = require('../models/blog')
+const User = require('../models/user')
+const bcrypt = require('bcrypt')
 
+let AUTHORIZATIONTOKEN = ''
 
-beforeEach(async () => {
+beforeEach( async () => {
   await Blog.deleteMany({})
-
   for (let ablog of helper.initialBlogs) {
     let blogObject = new Blog(ablog)
     await blogObject.save()
   }
+
 })
 
+beforeAll( async () => {
+  await User.deleteMany({})
+  const passwordHash = await bcrypt.hash('somePassword', 10)
+  const user = new User({
+    username: 'root',
+    name: 'root',
+    passwordHash
+  })
+
+  await user.save()
+  const userLoginInfo = {
+    username: 'root',
+    password: 'somePassword'
+  }
+
+  const response = await api
+    .post('/api/login')
+    .send(userLoginInfo)
+    .expect(200)
+    .expect('Content-Type', /application\/json/)
+
+    const userObjectWithToken = response.body
+    AUTHORIZATIONTOKEN = 'bearer ' + userObjectWithToken.token
+
+})
+
+
+  
 describe('when there is some initial blogs saved', () => {
 
   test('blog lists are return as json', async () => {
@@ -40,8 +71,8 @@ describe('when there is some initial blogs saved', () => {
 
 })
 
-describe('viewing a specific blog', () => {
-
+describe('POST a specific blog', () => {
+  
   test('unique identifier property of the blog posts is named id not _id', async() => {
     const response = await api.get('/api/blogs')
 
@@ -50,7 +81,7 @@ describe('viewing a specific blog', () => {
     expect(firstBlog.id).toBeDefined()
   })
 
-  test('a valid blog can be added' ,async () => {
+  test('a valid blog (with valid token) can be added' ,async () => {
     const newBlog = {
       title: 'Go To Statement Considered Harmful',
       author: 'Edsger W. Dijkstra',
@@ -58,7 +89,9 @@ describe('viewing a specific blog', () => {
       likes: 0,
     }
 
+
     await api.post('/api/blogs')
+      .set({ Authorization: AUTHORIZATIONTOKEN})
       .send(newBlog)
       .expect(201)
       .expect('Content-Type', /application\/json/)
@@ -82,6 +115,7 @@ describe('viewing a specific blog', () => {
     }
 
     await api.post('/api/blogs')
+      .set({ Authorization: AUTHORIZATIONTOKEN})
       .send(newBlog)
       .expect(201)
       .expect('Content-Type', /application\/json/)
@@ -103,11 +137,14 @@ describe('viewing a specific blog', () => {
       author: 'Robert C. Martin',
     }
 
-    await api.post('/api/blogs')
+    await api
+      .post('/api/blogs')
+      .set({ Authorization: AUTHORIZATIONTOKEN})
       .send(noTitleBlog)
       .expect(400)
 
     await api.post('/api/blogs')
+      .set({ Authorization: AUTHORIZATIONTOKEN})
       .send(noUrlBlog)
       .expect(400)
   })
@@ -122,6 +159,7 @@ describe('deletion of a blog', () => {
 
     await api
       .delete(`/api/blogs/${blogToDelete.id}`)
+      .set({ Authorization: AUTHORIZATIONTOKEN})
       .expect(204)
 
     const blogAtEnd = await helper.blogsInDb()
