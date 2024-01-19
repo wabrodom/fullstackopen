@@ -38,6 +38,7 @@ const App = () => {
       window.localStorage.setItem('loggedBloglistUser', JSON.stringify(objectWithToken))
 
       setUser(objectWithToken)
+      blogService.setToken(objectWithToken.token)
       setUsername('')
       setPassword('')
 
@@ -52,13 +53,17 @@ const App = () => {
     setUser(null)
   }
 
-  const handleAddBlog = async(event) => {
+  const handleAddBlog = async (event) => {
     event.preventDefault()
     const form = event.target
     const formData = new FormData(form)
     console.log(formData)
     const formJSON = Object.fromEntries(formData.entries())
     console.log(formJSON)
+    const returnedBlog = await blogService.create(formJSON)
+    setBlogs(blogs.concat(returnedBlog))
+
+
   } 
 
   const addBlog = () => (
