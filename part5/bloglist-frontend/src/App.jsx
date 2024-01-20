@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import Blog from './components/Blog'
 import Login from './components/Login'
+import Notification from './components/Notification'
 import blogService from './services/blogs'
 import loginService from './services/login'
 
@@ -9,6 +10,8 @@ const App = () => {
   const [user, setUser] = useState(null)
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
+  const [message, setMessage] = useState(null)
+  const [messageClass, setMessageClass] = useState(null)
 
   useEffect(() => {
     blogService
@@ -42,10 +45,11 @@ const App = () => {
       blogService.setToken(objectWithToken.token)
       setUsername('')
       setPassword('')
-
       console.log('successful login')
     } catch (excecption) {
-      console.log('login fail')
+      setMessage('login fail')
+      setMessageClass('error')
+      setTimeout(() => {setMessage(null)}, 5000)
     }
   }
 
@@ -58,11 +62,20 @@ const App = () => {
     event.preventDefault()
     const form = event.target
     const formData = new FormData(form)
-    console.log(formData)
+
     const formJSON = Object.fromEntries(formData.entries())
-    console.log(formJSON)
-    const returnedBlog = await blogService.create(formJSON)
-    setBlogs(blogs.concat(returnedBlog))
+    try {
+      const returnedBlog = await blogService.create(formJSON)
+      setBlogs(blogs.concat(returnedBlog))
+      setMessage(`a new blog ${returnedBlog.title} by ${returnedBlog.author} added`)
+      setMessageClass('success')
+      setTimeout(() => {setMessage(null)}, 5000)
+    } catch(exception) {
+      console.log(exception)
+      setMessage(exception)
+      setMessageClass('error')
+      setTimeout(() => {setMessage(null)}, 5000)
+    }
 
 
   } 
@@ -108,6 +121,12 @@ const App = () => {
 
   if (user === null) {
     return (
+      <div>  
+        <Notification 
+          message={message} 
+          messageClass={messageClass}
+        />
+
         <Login 
           handleLogin={handleLogin}
           handleOnChangeUsername={handleOnChangeUsername}
@@ -115,12 +134,19 @@ const App = () => {
           username={username}
           password={password}
         />  
+      </div>
     )
   }
 
   return (
     <section>
       <h2>Blogs</h2>
+
+      <Notification 
+        message={message} 
+        messageClass={messageClass}
+      />
+
       <p>{user.name} logged in</p>
       <button onClick={handleLogout}>Logout</button>
 
