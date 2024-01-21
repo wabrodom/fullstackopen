@@ -2,6 +2,8 @@ import { useState, useEffect } from 'react'
 import Blog from './components/Blog'
 import Login from './components/Login'
 import Notification from './components/Notification'
+import BlogForm from './components/BlogForm'
+import Togglable from './components/Togglable'
 import blogService from './services/blogs'
 import loginService from './services/login'
 
@@ -12,7 +14,7 @@ const App = () => {
   const [password, setPassword] = useState('')
   const [message, setMessage] = useState(null)
   const [messageClass, setMessageClass] = useState(null)
-
+ 
   useEffect(() => {
     blogService
       .getAll()
@@ -58,14 +60,10 @@ const App = () => {
     setUser(null)
   }
 
-  const handleAddBlog = async (event) => {
-    event.preventDefault()
-    const form = event.target
-    const formData = new FormData(form)
-
-    const formJSON = Object.fromEntries(formData.entries())
+  const handleAddBlog = async (object) => {
     try {
-      const returnedBlog = await blogService.create(formJSON)
+      const returnedBlog = await blogService.create(object)
+
       setBlogs(blogs.concat(returnedBlog))
       setMessage(`a new blog ${returnedBlog.title} by ${returnedBlog.author} added`)
       setMessageClass('success')
@@ -76,47 +74,26 @@ const App = () => {
       setMessageClass('error')
       setTimeout(() => {setMessage(null)}, 5000)
     }
-
-
   } 
 
-  const addBlog = () => (
-    <form onSubmit={handleAddBlog}>
-      <div>
-        <label htmlFor='title'>title: </label>
-        <input 
-          type='text'
-          name='title'
-          id='title'
-        />
-      </div>
+  // const blogForm = () => {
+  //   const hideWhenVisible = { display: blogFormVisible ? 'none' : ''}
+  //   const showWhenVisible = { display: blogFormVisible ? '': 'none'}
 
-      <div>
-        <label htmlFor='author'>author: </label>
-        <input 
-          type='text'
-          name='author'
-          id='author'
-        />
-      </div>
+  //   return (
+  //     <div>
+  //       <div style={hideWhenVisible}>
+  //         <button onClick={()=> setBlogFormVisible(true)}>new note</button>
+  //       </div>
+  //       <div style={showWhenVisible}>
+  //         <BlogForm handleAddBlog={handleAddBlog} />
+  //         <button onClick={()=> setBlogFormVisible(false)}>cancel</button>
+  //       </div>
+  //     </div>
+  //   )
+  // }
 
-      <div>
-        <label htmlFor='url'>url: </label>
-        <input 
-          type='url'
-          name='url'
-          id='url'
-        />
-      </div>
-
-   
-    <button type='submit'>create</button>
-    
-
-     
-
-    </form>
-  )
+  
  
 
   if (user === null) {
@@ -150,7 +127,10 @@ const App = () => {
       <p>{user.name} logged in</p>
       <button onClick={handleLogout}>Logout</button>
 
-      {addBlog()}
+      <Togglable buttonLabel='new blog'>
+        <BlogForm handleAddBlog={handleAddBlog} />
+      </Togglable>
+      
 
       {blogs.map(blog =>
         <Blog key={blog.id} blog={blog} />
