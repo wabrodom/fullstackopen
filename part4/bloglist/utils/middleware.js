@@ -19,7 +19,7 @@ const tokenExtracter = (request, response ,next) => {
 }
 
 const userExtracter =  async (request, response, next) => {
-  request.user = await helper.decodedTokenGetUser(request, response)
+  request.user = await helper.decodedTokenGetUser(request, response, next)
   next()
 }
 
@@ -34,7 +34,7 @@ const errorHandler = (error, request, response, next) => {
     return response.status(401).json({
       error: error.message
     })
-  } else if (error.nam === 'TokenExpiredError') {
+  } else if (error.name === 'TokenExpiredError') {
     return response.status(401).json({
       error: error.message
     })

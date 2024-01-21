@@ -11,7 +11,7 @@ const getTokenFrom = (request) => {
   return null
 }
 
-const decodedTokenGetUser = async (request, response) => {
+const decodedTokenGetUser = async (request, response, next) => {
   try {
     const decodedToken = jwt.verify(request.token, process.env.SECRET)
     if (!decodedToken.id) {
@@ -31,7 +31,7 @@ const decodedTokenGetUser = async (request, response) => {
         error: error.message
         })
     }
-    throw error
+    next(error)
   }
 }
 
