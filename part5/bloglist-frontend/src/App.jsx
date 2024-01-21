@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import Blog from './components/Blog'
 import Login from './components/Login'
 import Notification from './components/Notification'
@@ -60,11 +60,14 @@ const App = () => {
     setUser(null)
   }
 
+  const blogFormRef = useRef()
+  
   const handleAddBlog = async (object) => {
+    blogFormRef.current.toggleVisibility()
     try {
       const returnedBlog = await blogService.create(object)
-
       setBlogs(blogs.concat(returnedBlog))
+
       setMessage(`a new blog ${returnedBlog.title} by ${returnedBlog.author} added`)
       setMessageClass('success')
       setTimeout(() => {setMessage(null)}, 5000)
@@ -127,8 +130,8 @@ const App = () => {
       <p>{user.name} logged in</p>
       <button onClick={handleLogout}>Logout</button>
 
-      <Togglable buttonLabel='new blog'>
-        <BlogForm handleAddBlog={handleAddBlog} />
+      <Togglable buttonLabel='new blog' ref={blogFormRef}>
+        <BlogForm handleAddBlog={handleAddBlog}  />
       </Togglable>
       
 
