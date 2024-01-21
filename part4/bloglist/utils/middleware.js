@@ -34,6 +34,10 @@ const errorHandler = (error, request, response, next) => {
     return response.status(401).json({
       error: error.message
     })
+  } else if (error.nam === 'TokenExpiredError') {
+    return response.status(401).json({
+      error: error.message
+    })
   }
   logger.info('begin >>', error, '<< end')
   next(error)
