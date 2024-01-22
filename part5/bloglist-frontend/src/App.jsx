@@ -81,6 +81,32 @@ const App = () => {
     }
   } 
 
+  const likeABlog = async (id) => {
+    try {
+    const foundBlog = await blogService.getABlog(id)
+    foundBlog.likes = foundBlog.likes +1
+    const returnedBlog = await blogService.update(id, foundBlog)
+
+    const copyBlogs = [...blogs]
+
+    for (let i =0; i < copyBlogs.length; i++) {
+      if (copyBlogs[i].id === id) {
+        copyBlogs[i] = returnedBlog
+      }
+    }
+
+    setBlogs(copyBlogs)
+    setMessage(`like is add to ${returnedBlog.title} by ${returnedBlog.author}`)
+    setMessageClass('success')
+    setTimeout(() => {setMessage(null)}, 5000)
+
+  } catch(exception) {
+    // console.log(exception)
+    setMessage(exception.response.data.error)
+    setMessageClass('error')  
+    setTimeout(() => {setMessage(null)}, 5000)
+  }
+  }
   // const blogForm = () => {
   //   const hideWhenVisible = { display: blogFormVisible ? 'none' : ''}
   //   const showWhenVisible = { display: blogFormVisible ? '': 'none'}
@@ -138,7 +164,11 @@ const App = () => {
       
 
       {blogs.map(blog =>
-        <Blog key={blog.id} blog={blog} />
+        <Blog 
+          key={blog.id} 
+          blog={blog}
+          handleLike={likeABlog}
+        />
       )}
     </section>
   )
