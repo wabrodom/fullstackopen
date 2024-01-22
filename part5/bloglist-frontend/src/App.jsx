@@ -72,10 +72,12 @@ const App = () => {
       setMessageClass('success')
       setTimeout(() => {setMessage(null)}, 5000)
     } catch(exception) {
-      console.log(exception)
-      setMessage(exception)
-      setMessageClass('error')
+      // console.log(exception)
+      setMessage(exception.response.data.error + ' redirect to login again')
+      setMessageClass('error')  
       setTimeout(() => {setMessage(null)}, 5000)
+      window.localStorage.removeItem('loggedBloglistUser')
+      setUser(null)
     }
   } 
 
