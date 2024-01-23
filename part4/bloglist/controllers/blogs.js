@@ -58,8 +58,7 @@ blogsRouter.post('/',  middleware.userExtracter , async (request, response, next
 
 })
 
-blogsRouter.delete('/:id',  middleware.userExtracter, async (request, response) => {
-  
+blogsRouter.delete('/:id', middleware.userExtracter, async (request, response, next) => {
   try {
     const user = request.user
 
@@ -68,17 +67,24 @@ blogsRouter.delete('/:id',  middleware.userExtracter, async (request, response) 
         error: 'Bad request. The user id is not found.'
       })
     }
-
-    const deleteBlog = await Blog.findByIdAndRemove(request.params.id)
-
-    user.blogs = user.blogs.filter(blogId =>  {
-      // console.log('blogs array store blogId as id object',blogId)
-      return blogId.toString() !== deleteBlog._id.toString()
-    })
     
-    await user.save()
-
-    response.status(204).end()
+    const foundBlog = await Blog.findById(request.params.id)
+    if (foundBlog.user._id.toString() === user._id.toString()) {
+      const deleteBlog = await Blog.findByIdAndRemove(request.params.id)
+  
+      user.blogs = user.blogs.filter(blogId =>  {
+        // console.log('blogs array store blogId as id object',blogId)
+        return blogId.toString() !== deleteBlog._id.toString()
+      })
+      
+      await user.save()
+  
+      response.status(204).end()
+    }
+    return response.status(400).json({
+      error: 'Bad request. The user is not created this blog'
+    })
+  
   } catch(exception) {
     next(exception)
   }
