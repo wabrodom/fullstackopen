@@ -83,30 +83,56 @@ const App = () => {
 
   const likeABlog = async (id) => {
     try {
-    const foundBlog = await blogService.getABlog(id)
-    foundBlog.likes = foundBlog.likes +1
-    const returnedBlog = await blogService.update(id, foundBlog)
+      const foundBlog = await blogService.getABlog(id)
+      foundBlog.likes = foundBlog.likes +1
+      const returnedBlog = await blogService.update(id, foundBlog)
 
-    const copyBlogs = [...blogs]
+      const copyBlogs = [...blogs]
 
-    for (let i =0; i < copyBlogs.length; i++) {
-      if (copyBlogs[i].id === id) {
-        copyBlogs[i] = returnedBlog
+      for (let i =0; i < copyBlogs.length; i++) {
+        if (copyBlogs[i].id === id) {
+          copyBlogs[i] = returnedBlog
+        }
       }
-    }
+      copyBlogs.sort((a,b) => b.likes - a.likes)
+      setBlogs(copyBlogs)
+      setMessage(`like is add to ${returnedBlog.title} by ${returnedBlog.author}`)
+      setMessageClass('success')
+      setTimeout(() => {setMessage(null)}, 5000)
 
-    setBlogs(copyBlogs)
-    setMessage(`like is add to ${returnedBlog.title} by ${returnedBlog.author}`)
-    setMessageClass('success')
-    setTimeout(() => {setMessage(null)}, 5000)
+    } catch(exception) {
+      // console.log(exception)
+      setMessage(exception.response.data.error)
+      setMessageClass('error')  
+      setTimeout(() => {setMessage(null)}, 5000)
+    } 
+  }
 
-  } catch(exception) {
-    // console.log(exception)
-    setMessage(exception.response.data.error)
-    setMessageClass('error')  
-    setTimeout(() => {setMessage(null)}, 5000)
+  const removeAblog = async (id, blog) => {
+    if (window.confirm(`remove ${blog.title} by ${blog.author}`)) {
+      try {
+        await blogService.remove(id)
+        const newBlogs = blogs.filter(b => b.id !== id)
+        setBlogs(newBlogs)
+  
+      } catch(exception) {
+        const errorMessage = exception.response.data.error 
+        if (errorMessage === "jwt expired") {
+          setMessage('login session expired, please login again')
+          setMessageClass('error')  
+          setTimeout(() => {setMessage(null)}, 5000)
+          window.localStorage.removeItem('loggedBloglistUser')
+          setUser(null)
+        } else {
+          console.log(exception.response)
+        }
+
+      }
+      
+    }    
   }
-  }
+
+  
   // const blogForm = () => {
   //   const hideWhenVisible = { display: blogFormVisible ? 'none' : ''}
   //   const showWhenVisible = { display: blogFormVisible ? '': 'none'}
@@ -168,6 +194,8 @@ const App = () => {
           key={blog.id} 
           blog={blog}
           handleLike={likeABlog}
+          handleDelete={removeAblog}
+          currentUser={user.id}
         />
       )}
     </section>
