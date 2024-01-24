@@ -14,12 +14,12 @@ const App = () => {
   const [password, setPassword] = useState('')
   const [message, setMessage] = useState(null)
   const [messageClass, setMessageClass] = useState(null)
- 
+
   useEffect(() => {
     blogService
       .getAll()
       .then(blogs => setBlogs( blogs )
-    )  
+      )
   }, [])
 
   useEffect(() => {
@@ -31,8 +31,8 @@ const App = () => {
     }
   }, [])
 
-  const handleOnChangeUsername = ({target}) => setUsername(target.value)
-  const handleOnChangePassword = ({target}) => setPassword(target.value)
+  const handleOnChangeUsername = ({ target }) => setUsername(target.value)
+  const handleOnChangePassword = ({ target }) => setPassword(target.value)
 
   const handleLogin = async (event) => {
     event.preventDefault()
@@ -61,7 +61,7 @@ const App = () => {
   }
 
   const blogFormRef = useRef()
-  
+
   const handleAddBlog = async (object) => {
     blogFormRef.current.toggleVisibility()
     try {
@@ -74,12 +74,12 @@ const App = () => {
     } catch(exception) {
       // console.log(exception)
       setMessage(exception.response.data.error + ' redirect to login again')
-      setMessageClass('error')  
+      setMessageClass('error')
       setTimeout(() => {setMessage(null)}, 5000)
       window.localStorage.removeItem('loggedBloglistUser')
       setUser(null)
     }
-  } 
+  }
 
   const likeABlog = async (id) => {
     try {
@@ -103,9 +103,9 @@ const App = () => {
     } catch(exception) {
       // console.log(exception)
       setMessage(exception.response.data.error)
-      setMessageClass('error')  
+      setMessageClass('error')
       setTimeout(() => {setMessage(null)}, 5000)
-    } 
+    }
   }
 
   const removeAblog = async (id, blog) => {
@@ -114,12 +114,12 @@ const App = () => {
         await blogService.remove(id)
         const newBlogs = blogs.filter(b => b.id !== id)
         setBlogs(newBlogs)
-  
+
       } catch(exception) {
-        const errorMessage = exception.response.data.error 
-        if (errorMessage === "jwt expired") {
+        const errorMessage = exception.response.data.error
+        if (errorMessage === 'jwt expired') {
           setMessage('login session expired, please login again')
-          setMessageClass('error')  
+          setMessageClass('error')
           setTimeout(() => {setMessage(null)}, 5000)
           window.localStorage.removeItem('loggedBloglistUser')
           setUser(null)
@@ -128,11 +128,11 @@ const App = () => {
         }
 
       }
-      
-    }    
+
+    }
   }
 
-  
+
   // const blogForm = () => {
   //   const hideWhenVisible = { display: blogFormVisible ? 'none' : ''}
   //   const showWhenVisible = { display: blogFormVisible ? '': 'none'}
@@ -150,24 +150,24 @@ const App = () => {
   //   )
   // }
 
-  
- 
+
+
 
   if (user === null) {
     return (
-      <div>  
-        <Notification 
-          message={message} 
+      <div>
+        <Notification
+          message={message}
           messageClass={messageClass}
         />
 
-        <LoginForm 
+        <LoginForm
           handleLogin={handleLogin}
           handleOnChangeUsername={handleOnChangeUsername}
           handleOnChangePassword={handleOnChangePassword}
           username={username}
           password={password}
-        />  
+        />
       </div>
     )
   }
@@ -176,8 +176,8 @@ const App = () => {
     <section>
       <h2>Blogs</h2>
 
-      <Notification 
-        message={message} 
+      <Notification
+        message={message}
         messageClass={messageClass}
       />
 
@@ -187,11 +187,11 @@ const App = () => {
       <Togglable buttonLabel='new blog' ref={blogFormRef}>
         <BlogForm handleAddBlog={handleAddBlog}  />
       </Togglable>
-      
+
 
       {blogs.map(blog =>
-        <Blog 
-          key={blog.id} 
+        <Blog
+          key={blog.id}
           blog={blog}
           handleLike={likeABlog}
           handleDelete={removeAblog}

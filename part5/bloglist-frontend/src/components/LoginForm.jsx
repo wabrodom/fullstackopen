@@ -6,12 +6,12 @@ const LoginForm = (props) => {
   const handleOnChangePassword = props.handleOnChangePassword
   const username = props.username
   const password = props.password
-  
+
   return (
-      <form onSubmit={handleLogin}>
+    <form onSubmit={handleLogin}>
       <div>
         Username
-        <input 
+        <input
           type="text"
           value={username}
           name='Username'
@@ -20,7 +20,7 @@ const LoginForm = (props) => {
       </div>
       <div>
         Password
-        <input 
+        <input
           type='password'
           value={password}
           name='Password'

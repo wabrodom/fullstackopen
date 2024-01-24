@@ -3,7 +3,7 @@ import { useState } from 'react'
 const Blog = ({ blog, handleLike, handleDelete, currentUser }) =>  {
   const [visible, setVisible] = useState(false)
 
-  const showWhenVisible = { display: visible ? '': 'none'}
+  const showWhenVisible = { display: visible ? '': 'none' }
   const blogStyle = {
     paddingTop: 10,
     paddingLeft: 2,
@@ -17,12 +17,12 @@ const Blog = ({ blog, handleLike, handleDelete, currentUser }) =>  {
   )
 
   return (
-   <div style={blogStyle}>
-       <div>
-          {blog.title}
-          <button onClick={() => setVisible(!visible)}>
-            {visible ? 'hide': 'view'}
-          </button>
+    <div style={blogStyle}>
+      <div>
+        {blog.title}
+        <button onClick={() => setVisible(!visible)}>
+          {visible ? 'hide': 'view'}
+        </button>
       </div>
 
       <section style={showWhenVisible}>
@@ -30,19 +30,19 @@ const Blog = ({ blog, handleLike, handleDelete, currentUser }) =>  {
           <a href={ `${blog.url}` }>{blog.url}</a>
         </div>
         <div>
-          likes {blog.likes} 
+          likes {blog.likes}
           <button onClick={() => handleLike(blog.id)}>Like</button>
         </div>
         <div>
-          {blog.author} 
+          {blog.author}
           {currentUser === creator ? removeButton(): ''}
         </div>
 
 
       </section>
-  
-  
-   </div>  
+
+
+    </div>
   )
 }
 

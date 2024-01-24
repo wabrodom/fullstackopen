@@ -12,7 +12,7 @@ const BlogForm = ({ handleAddBlog }) => {
       author: author,
       url: url,
     }
-    
+
     handleAddBlog(newBlog)
 
     setTitle('')
@@ -21,46 +21,46 @@ const BlogForm = ({ handleAddBlog }) => {
   }
 
   return (
-      <form onSubmit={addBlog}>
-          <div>
-            <label htmlFor='title'>title: </label>
-            <input 
-              type='text'
-              name='title'
-              id='title'
-              value={title}
-              onChange={({target}) => setTitle(target.value)}
-            />
-          </div>
-    
-          <div>
-            <label htmlFor='author'>author: </label>
-            <input 
-              type='text'
-              name='author'
-              id='author'
-              value={author}
-              onChange={({target})=> setAuthor(target.value)}
-            />
-          </div>
-    
-          <div>
-            <label htmlFor='url'>url: </label>
-            <input 
-              type='url'
-              name='url'
-              id='url'
-              value={url}
-              onChange={({target}) => setUrl(target.value)}
-            />
-          </div>
-    
-      
-          <button type='submit'>create</button>
+    <form onSubmit={addBlog}>
+      <div>
+        <label htmlFor='title'>title: </label>
+        <input
+          type='text'
+          name='title'
+          id='title'
+          value={title}
+          onChange={({ target }) => setTitle(target.value)}
+        />
+      </div>
 
-      </form>
-    
+      <div>
+        <label htmlFor='author'>author: </label>
+        <input
+          type='text'
+          name='author'
+          id='author'
+          value={author}
+          onChange={({ target }) => setAuthor(target.value)}
+        />
+      </div>
+
+      <div>
+        <label htmlFor='url'>url: </label>
+        <input
+          type='url'
+          name='url'
+          id='url'
+          value={url}
+          onChange={({ target }) => setUrl(target.value)}
+        />
+      </div>
+
+
+      <button type='submit'>create</button>
+
+    </form>
+
   )
-} 
+}
 
 export default BlogForm
