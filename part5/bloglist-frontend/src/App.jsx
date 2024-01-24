@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react'
 import Blog from './components/Blog'
-import Login from './components/Login'
+import LoginForm from './components/LoginForm'
 import Notification from './components/Notification'
 import BlogForm from './components/BlogForm'
 import Togglable from './components/Togglable'
@@ -161,7 +161,7 @@ const App = () => {
           messageClass={messageClass}
         />
 
-        <Login 
+        <LoginForm 
           handleLogin={handleLogin}
           handleOnChangeUsername={handleOnChangeUsername}
           handleOnChangePassword={handleOnChangePassword}

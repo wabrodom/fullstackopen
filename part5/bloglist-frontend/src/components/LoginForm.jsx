@@ -1,4 +1,6 @@
-const Login = (props) => {
+import PropTypes from 'prop-types'
+
+const LoginForm = (props) => {
   const handleLogin = props.handleLogin
   const handleOnChangeUsername = props.handleOnChangeUsername
   const handleOnChangePassword = props.handleOnChangePassword
@@ -30,4 +32,13 @@ const Login = (props) => {
   )
 }
 
-export default Login
+LoginForm.propTypes = {
+  handleLogin: PropTypes.func.isRequired,
+  handleOnChangeUsername: PropTypes.func.isRequired,
+  handleOnChangePassword: PropTypes.func.isRequired,
+  username: PropTypes.string.isRequired,
+  password: PropTypes.string.isRequired,
+}
+
+
+export default LoginForm
