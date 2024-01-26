@@ -18,12 +18,18 @@ const Blog = ({ blog, handleLike, handleDelete, currentUser }) =>  {
 
   return (
     <div style={blogStyle}>
-      <div>
-        {blog.title}
+      <section className='showByDefaultContent'>
+        <div>
+          {blog.title}
+        </div>
+        <div>
+          {blog.author}
+        </div>
         <button onClick={() => setVisible(!visible)}>
           {visible ? 'hide': 'view'}
         </button>
-      </div>
+        
+      </section>
 
       <section style={showWhenVisible}>
         <div>
@@ -34,7 +40,6 @@ const Blog = ({ blog, handleLike, handleDelete, currentUser }) =>  {
           <button onClick={() => handleLike(blog.id)}>Like</button>
         </div>
         <div>
-          {blog.author}
           {currentUser === creator ? removeButton(): ''}
         </div>
 
