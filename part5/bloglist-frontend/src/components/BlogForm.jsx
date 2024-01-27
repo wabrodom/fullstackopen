@@ -5,15 +5,17 @@ const BlogForm = ({ handleAddBlog }) => {
   const [author, setAuthor] = useState('')
   const [url, setUrl] = useState('')
 
-  const addBlog =  (event) => {
+  const handleTitleChange = (event) => setTitle(event.target.value)
+  const handleAuthorChange = (event) => setAuthor(event.target.value)
+  const handleUrlChange = (event) => setUrl(event.target.value)
+
+  const addBlog = (event) => {
     event.preventDefault()
-    const newBlog = {
+    handleAddBlog({
       title: title,
       author: author,
       url: url,
-    }
-
-    handleAddBlog(newBlog)
+    })
 
     setTitle('')
     setAuthor('')
@@ -29,7 +31,7 @@ const BlogForm = ({ handleAddBlog }) => {
           name='title'
           id='title'
           value={title}
-          onChange={({ target }) => setTitle(target.value)}
+          onChange={handleTitleChange}
         />
       </div>
 
@@ -40,7 +42,7 @@ const BlogForm = ({ handleAddBlog }) => {
           name='author'
           id='author'
           value={author}
-          onChange={({ target }) => setAuthor(target.value)}
+          onChange={handleAuthorChange}
         />
       </div>
 
@@ -51,7 +53,7 @@ const BlogForm = ({ handleAddBlog }) => {
           name='url'
           id='url'
           value={url}
-          onChange={({ target }) => setUrl(target.value)}
+          onChange={handleUrlChange}
         />
       </div>
 
