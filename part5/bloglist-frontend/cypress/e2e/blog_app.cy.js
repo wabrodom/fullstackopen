@@ -135,6 +135,15 @@ describe('blogs app', function() {
 
     })
 
+    it.only('the user who created a blog can delete it', function() {
+      cy.createBlog(firstBlog)
+      cy.createBlog(secondBlog)
+      cy.get('.view-button:first').click()
+      cy.get('.remove-button:first').click()
+
+      cy.get('html').should('not.contain', firstBlog.title)
+      cy.get('html').should('contain', secondBlog.title)
+    })
     
 
 

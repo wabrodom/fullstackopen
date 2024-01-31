@@ -13,7 +13,7 @@ const Blog = ({ blog, handleLike, handleDelete, currentUser }) =>  {
   }
   const creator = blog.user.id
   const removeButton = () => (
-    <button onClick={() => handleDelete(blog.id, blog)}>Remove</button>
+    <button onClick={() => handleDelete(blog.id, blog)} className='remove-button'>Remove</button>
   )
 
   return (
