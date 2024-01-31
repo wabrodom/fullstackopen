@@ -5,11 +5,21 @@ const middleware = require('../utils/middleware')
 
 
 blogsRouter.get('/', async (request, response, next) => {
+  const { sort, field } = request.query
+  const sortNumber = (sort === 'desc') ? -1 : 1
   try {
+    if (sort &&  field === 'likes') {
+      const blogs = await Blog
+        .find({})
+        .sort({likes: sortNumber})
+        .populate('user', {username: 1, name:1})
+      return response.json(blogs)
+    } 
     const blogs = await Blog
       .find({})
       .populate('user', {username: 1, name:1})
     response.json(blogs)
+    
   } catch (exception) {
     next (exception)
   }
