@@ -8,7 +8,7 @@ const setToken = (newToken) => {
 }
 
 const getAll = () => {
-  const request = axios.get(baseUrl)
+  const request = axios.get(`${baseUrl}/?sort=desc&field=likes`)
   return request.then(response => response.data)
 }
 

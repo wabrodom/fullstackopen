@@ -12,19 +12,19 @@ const testUser2 = {
 
 
 const firstBlog = {
-  title: 'Understanding version control and mastering git - Branches and more...!!',
+  title: '1 Understanding version control and mastering git - Branches and more...!!',
   author: 'Nandan Kumar',
   url: 'https://blog.nandan.dev/understanding-version-control-and-mastering-git-branches-and-more'
 } 
 
 const secondBlog = {
-  title: 'RegExr: Learn, Build, & Test RegEx',
+  title: '2 RegExr: Learn, Build, & Test RegEx',
   author: 'gskinner',
   url: 'https://regexr.com/'
 }
 
 const thirdBlog = {
-  title: 'Gleb Bahmutov PhD blog',
+  title: '3 Gleb Bahmutov PhD blog',
   author: 'Dr. Gleb Bahmutov',
   url: 'https://glebbahmutov.com/blog/'
 }
@@ -67,6 +67,9 @@ describe('blogs app', function() {
   describe.only('when logged in', function() {
     beforeEach(function() {
       cy.login(testUser1)
+      cy.createBlog(firstBlog)
+      cy.createBlog(secondBlog)
+      cy.createBlog(thirdBlog)
     })
 
 
@@ -135,9 +138,7 @@ describe('blogs app', function() {
 
     })
 
-    it.only('the user who created a blog can delete it', function() {
-      cy.createBlog(firstBlog)
-      cy.createBlog(secondBlog)
+    it('the user who created a blog can delete it', function() {
       cy.get('.view-button:first').click()
       cy.get('.remove-button:first').click()
 
@@ -146,8 +147,56 @@ describe('blogs app', function() {
     })
     
 
+    it('the creator can see the delete button of a blog, not anyone else', function() {
+      cy.get('.view-button:eq(1)').click()
+      cy.get('.remove-button:eq(1)')
+      cy.get('.view-button:eq(1)').click()
 
+      cy.get('.view-button:first').click()
+      cy.get('.remove-button:first')
+      cy.get('.view-button:first').click()
 
+      cy.login(testUser2)
+
+      cy.get('.view-button:eq(1)').click()
+      cy.get('.remove-button:eq(1)').should('not.exist')
+      cy.get('.view-button:eq(1)').click()
+
+      cy.get('.view-button:first').click()
+      cy.get('.remove-button:first').should('not.exist')
+      cy.get('.view-button:first').click()
+  
+    })
+
+    it.only('the blogs are descending ordered according to likes ', function() {
+      // get 3rd blog and tap a like,  3rd == 1
+      cy.get('.view-button:eq(2)').click()
+      cy.get('.like-button:eq(2)').click()
+      cy.get('.blog:first').find('div:eq(0)').should('contain', thirdBlog.title)
+
+      // get original 1st blog and tap a like will stay in place, 1st ==1
+      cy.get('.view-button:eq(1)').click()
+      cy.get('.like-button:eq(1)').click()
+      cy.get('.blog:eq(1)').find('div:eq(0)').should('contain', firstBlog.title)
+
+      // stay on 2nd order blog, the original 1st blog, will move it to 1st, 1st == 2
+      cy.get('.like-button:eq(1)').click()
+      cy.get('.blog:eq(0) div:eq(0)').should('contain', firstBlog.title)
+
+      cy.login(testUser2)
+
+      // get 2nd order blog, the original 3rd blog, will stay in place, 3rd ==2
+      cy.get('.view-button:eq(1)').click()
+      cy.get('.like-button:eq(1)').click()
+      cy.get('.blog:eq(0) div:eq(0)').should('contain', firstBlog.title)
+      cy.get('.blog:eq(1) div:eq(0)').should('contain', thirdBlog.title)
+
+      // get 3rd blog, stay open,  will come in 1st, 3rd == 3
+      cy.get('.like-button:eq(1)').click()
+      cy.get('.blog:eq(0) div:eq(0)').should('contain', thirdBlog.title)
+      cy.get('.likes:eq(0)').should('contain', '3')
+ 
+    })
 
   })
 

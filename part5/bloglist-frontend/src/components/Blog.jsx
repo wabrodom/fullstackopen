@@ -17,7 +17,7 @@ const Blog = ({ blog, handleLike, handleDelete, currentUser }) =>  {
   )
 
   return (
-    <div style={blogStyle}>
+    <div style={blogStyle} className='blog'>
       <section className='showByDefaultContent'>
         <div>
           {blog.title}
