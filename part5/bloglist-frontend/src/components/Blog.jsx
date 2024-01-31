@@ -25,7 +25,7 @@ const Blog = ({ blog, handleLike, handleDelete, currentUser }) =>  {
         <div>
           {blog.author}
         </div>
-        <button onClick={() => setVisible(!visible)}>
+        <button onClick={() => setVisible(!visible)} className='view-button'>
           {visible ? 'hide': 'view'}
         </button>
         
@@ -36,8 +36,8 @@ const Blog = ({ blog, handleLike, handleDelete, currentUser }) =>  {
           <a href={ `${blog.url}` }>{blog.url}</a>
         </div>
         <div>
-          <span id='current-likes'>likes {blog.likes}</span>
-          <button onClick={() => handleLike(blog.id)}>Like</button>
+          likes <span className='likes'>{blog.likes}</span>
+          <button onClick={() => handleLike(blog.id)} className='like-button'>Like</button>
         </div>
         <div>
           {currentUser === creator ? removeButton(): ''}

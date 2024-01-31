@@ -1,9 +1,43 @@
+const testUser1 = {
+  username: 'tester1',
+  name: 'tester1',
+  password: 'salainen',
+}
+
+const testUser2 = {
+  username: 'tester2',
+  name: 'tester2',
+  password: 'salainen2',
+}
+
+
+const firstBlog = {
+  title: 'Understanding version control and mastering git - Branches and more...!!',
+  author: 'Nandan Kumar',
+  url: 'https://blog.nandan.dev/understanding-version-control-and-mastering-git-branches-and-more'
+} 
+
+const secondBlog = {
+  title: 'RegExr: Learn, Build, & Test RegEx',
+  author: 'gskinner',
+  url: 'https://regexr.com/'
+}
+
+const thirdBlog = {
+  title: 'Gleb Bahmutov PhD blog',
+  author: 'Dr. Gleb Bahmutov',
+  url: 'https://glebbahmutov.com/blog/'
+}
+
+
+
 describe('blogs app', function() {
   beforeEach(function() {
     cy.request('POST', `${Cypress.env('BACKEND')}/testing/reset`)
     localStorage.removeItem('loggedBloglistUser')
 
-    cy.request('POST', `${Cypress.env('BACKEND')}/users`, newUser)
+    cy.request('POST', `${Cypress.env('BACKEND')}/users`, testUser1)
+    cy.request('POST', `${Cypress.env('BACKEND')}/users`, testUser2)
     cy.visit('')
   })
 
@@ -11,21 +45,16 @@ describe('blogs app', function() {
     cy.contains(/login/i)
   })
 
-  const newUser = {
-    username: 'tester',
-    name: 'test test',
-    password: 'salainen',
-  }
 
   describe('login', function() {
     it('succeeds with correct credentials', function() {
-      cy.get('input[name="Username"]').type(newUser.username)
-      cy.get('input[name="Password"]').type(newUser.password)
+      cy.get('input[name="Username"]').type(testUser1.username)
+      cy.get('input[name="Password"]').type(testUser1.password)
       cy.get('button[type="submit"]').click()
     })
 
     it('fails with wrong credentials', function() {
-      cy.get('input[name="Username"]').type(newUser.username)
+      cy.get('input[name="Username"]').type(testUser1.username)
       cy.get('input[name="Password"]').type('wrong password')
       cy.get('#login-button').click()
 
@@ -35,33 +64,11 @@ describe('blogs app', function() {
   })
 
 
-  describe('when logged in', function() {
+  describe.only('when logged in', function() {
     beforeEach(function() {
-      cy.request('POST', `${Cypress.env('BACKEND')}/login`, {
-        username: newUser.username, password: newUser.password
-      }).then(response => {
-        localStorage.setItem('loggedBloglistUser', JSON.stringify(response.body))
-        cy.visit('')
-      })
+      cy.login(testUser1)
     })
 
-    const firstBlog = {
-      title: 'Understanding version control and mastering git - Branches and more...!!',
-      author: 'Nandan Kumar',
-      url: 'https://blog.nandan.dev/understanding-version-control-and-mastering-git-branches-and-more'
-    } 
-
-    const secondBlog = {
-      title: 'RegExr: Learn, Build, & Test RegEx',
-      author: 'gskinner',
-      url: 'https://regexr.com/'
-    }
-
-    const thirdBlog = {
-      title: 'Gleb Bahmutov PhD blog',
-      author: 'Dr. Gleb Bahmutov',
-      url: 'https://glebbahmutov.com/blog/'
-    }
 
     const createABlog = (obj) => {
       cy.get('button').contains(/new blog/i).click()
@@ -83,43 +90,54 @@ describe('blogs app', function() {
     })
 
     it('3 blog can be created', function() {
-      createABlog(firstBlog)
-      createABlog(secondBlog)
-      createABlog(thirdBlog)
+      cy.createBlog(firstBlog)
+      cy.createBlog(secondBlog)
+      cy.createBlog(thirdBlog)
       checkDefaultShowContents(firstBlog)
       checkDefaultShowContents(secondBlog)
       checkDefaultShowContents(thirdBlog)
     })
 
-    const getCurrentLikes = () => {
-   
-    }
 
-    it.only('creator can like they blog', function() {
-      createABlog(firstBlog)
-      cy.get('button').contains(/view/i).click()
+    it('users can like a blog', function() {
+      cy.createBlog(firstBlog)
+      cy.get('.view-button:first').click()
 
-      cy.get('#current-likes').then($span => {
-          const text = $span.text()
-          const likesBefore = Number(text.split(' ')[1])
-          console.log(likesBefore)
+      cy.get('.likes:first').then(($span) => {
+          const textBefore = $span.text()
+          const likesBefore = parseInt($span.text())
 
-          cy.get('button').contains(/like/i)
-            .click()
+          cy.get('.like-button:first').click()
+          cy.get('.likes:first').invoke('text').should('not.equal', textBefore)
             .then(() => {
-              const text2 = $span.text()
-              const likesAfter = Number(text2.split(' ')[1])
-              console.log(likesAfter)
+              const likesAfter = parseInt($span.text())
+
               expect(likesAfter).to.eq(likesBefore + 1)
             })
-
       })
-  
 
+      cy.login(testUser2)
 
-      
-      
+      cy.get('.view-button:first').click()
+
+      cy.get('.likes:first').then(($span) => {
+          const textBefore = $span.text()
+          const likesBefore = parseInt($span.text())
+
+          cy.get('.like-button:first').click()
+          cy.get('.likes:first').invoke('text').should('not.equal', textBefore)
+            .then(() => {
+              const likesAfter = parseInt($span.text())
+
+              expect(likesAfter).to.eq(likesBefore + 1)
+            })
+      })
+
     })
+
+    
+
+
 
 
   })
