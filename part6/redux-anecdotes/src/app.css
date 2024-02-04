@@ -1,8 +1,11 @@
-html, body {
+html {
   font-size: 62.5%;
   box-sizing: border-box;
 }
 
+body {
+  font-size: 2rem;
+}
 
 .anecdote {
   border: 0.25rem solid lightgray;
@@ -11,7 +14,7 @@ html, body {
 
 .anecdote {
   font-weight: 500;
-  font-size: 2rem;
+
   padding: 1rem;
 }
 
