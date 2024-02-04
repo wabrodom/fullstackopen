@@ -1,0 +1,21 @@
+html, body {
+  font-size: 62.5%;
+  box-sizing: border-box;
+}
+
+
+.anecdote {
+  border: 0.25rem solid lightgray;
+  margin-top: 0.25rem;
+}
+
+.anecdote {
+  font-weight: 500;
+  font-size: 2rem;
+  padding: 1rem;
+}
+
+.vote-count > span {
+  font-style: italic;
+  padding: 0.50rem 0.50rem;
+}
