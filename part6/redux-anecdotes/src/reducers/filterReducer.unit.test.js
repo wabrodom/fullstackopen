@@ -5,7 +5,7 @@ describe('filterReducer', () => {
   test('returns new state of with action FILTER_TEXT' ,() => {
     const state = ''
     const action = {
-      type: 'FILTER_TEXT',
+      type: 'filter/filterChange',
       payload: 'often'
     }
 
