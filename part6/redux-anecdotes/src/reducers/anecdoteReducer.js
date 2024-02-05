@@ -1,3 +1,5 @@
+import { createSlice } from '@reduxjs/toolkit'
+
 const anecdotesAtStart = [
   'If it hurts, do it more often',
   'Adding manpower to a late software project makes it later!',
@@ -17,41 +19,63 @@ const asObject = (anecdote) => {
   }
 }
 
-export const createAnecdote = (content) => {
-  return {
-    type: 'ADD',
-    payload: asObject(content)
-  }
-}
-
-export const voteTo = (id) => {
-  return {
-    type: 'VOTE',
-    payload: { id }
-  }
-}
-
-
 const initialState = anecdotesAtStart.map(asObject)
 
-const reducer = (state = initialState, action) => {
-  // console.log('state now: ', state)
-  // console.log('action', action)
-  switch(action.type) {
-    case 'VOTE' : {
-      const id = action.payload.id
-      const anecdoteToChange  = state.find(anecdote => anecdote.id === id)
-      const changedAnecdote = {...anecdoteToChange, votes: anecdoteToChange.votes + 1}
-      const newState = state.map(anecdote => anecdote.id !== id ? anecdote: changedAnecdote)
+const anecdoteSlice = createSlice({
+  name: 'anecdotes',
+  initialState,
+  reducers: {
+    createAnecdote: (state, action) => {
+      const content = action.payload
+      const anecdote = asObject(content)
+      return [...state, anecdote]
+    },
+    voteTo(state, action) {
+      const id = action.payload
+      const anecdoteToChange = state.find(a => a.id === id)
+      const changedAnecdote = { ...anecdoteToChange, votes: anecdoteToChange.votes + 1 }
+
+      const newState = state.map(anecdote => anecdote.id !== id ? anecdote : changedAnecdote)
       newState.sort((a,b) => b.votes - a.votes)
       return newState
     }
-    case 'ADD' : {
-      return state.concat(action.payload)
-    }
-  } 
+  }
+})
 
-  return state
-}
+export const { createAnecdote, voteTo } = anecdoteSlice.actions
+export default anecdoteSlice.reducer
 
-export default reducer
+
+// export const createAnecdote = (content) => {
+//   return {
+//     type: 'ADD',
+//     payload: asObject(content)
+//   }
+// }
+
+// export const voteTo = (id) => {
+//   return {
+//     type: 'VOTE',
+//     payload: { id }
+//   }
+// }
+
+// const reducer = (state = initialState, action) => {
+//   // console.log('state now: ', state)
+//   // console.log('action', action)
+//   switch(action.type) {
+//     case 'VOTE' : {
+//       const id = action.payload.id
+//       const anecdoteToChange  = state.find(anecdote => anecdote.id === id)
+//       const changedAnecdote = {...anecdoteToChange, votes: anecdoteToChange.votes + 1}
+//       const newState = state.map(anecdote => anecdote.id !== id ? anecdote: changedAnecdote)
+//       newState.sort((a,b) => b.votes - a.votes)
+//       return newState
+//     }
+//     case 'ADD' : {
+//       return state.concat(action.payload)
+//     }
+//   } 
+
+//   return state
+// }
