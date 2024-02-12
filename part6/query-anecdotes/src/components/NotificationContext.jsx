@@ -4,17 +4,14 @@ const NotificationContext = createContext()
 
 const notificationReducer = (state, action) => {
   switch(action.type) {
-    case 'create': {
-      return `Created '${action.payload}'`
-    }
-    case 'vote': {
-      return `Anecdote '${action.payload}' voted `
-    }
-    case 'error': {
+    case 'SET': {
       return `${action.payload}`
     }
-    default: {
+    case 'RESET' : {
       return null
+    }
+    default: {
+      return state
     }
   }
 }
@@ -36,7 +33,13 @@ export const useNotificationValue = () => {
 }
 export const useNotificationDispatch = () => {
   const notificationAndDispatch = useContext(NotificationContext)
-  return notificationAndDispatch[1]
+  const dispatch = notificationAndDispatch[1]
+  return (payload) => {
+    dispatch({type: 'SET', payload: payload })
+    setTimeout(() => {
+      dispatch({ type: 'RESET'})
+    } , 5000)
+  }
 }
 
 export default NotificationContext

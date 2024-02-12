@@ -4,7 +4,7 @@ import  { useNotificationDispatch }  from './NotificationContext'
 
 const AnecdoteForm = () => {
   const nearestQueryClient = useQueryClient()
-  const dispatch = useNotificationDispatch()
+  const notifyWith = useNotificationDispatch()
 
   const newAnecdoteMutation = useMutation({
     mutationFn: createAnecdote,
@@ -14,8 +14,7 @@ const AnecdoteForm = () => {
     },
     onError: (error) => {
       const errorData = error.response.data.error
-      dispatch({ type: 'error', payload: errorData })
-      setTimeout(()=> dispatch({ type: 'reset' }), 5000)
+      notifyWith(errorData)
     }
   })
 
@@ -27,8 +26,7 @@ const AnecdoteForm = () => {
     const newAnecdote = { content , votes: 0}
     newAnecdoteMutation.mutate(newAnecdote)
 
-    dispatch({ type: 'create', payload: newAnecdote.content })
-    setTimeout(()=> dispatch({ type: 'reset' }), 5000)
+    notifyWith(`Created '${newAnecdote.content}'`)
 }
 
   return (
