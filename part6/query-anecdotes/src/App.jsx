@@ -3,6 +3,7 @@ import Notification from './components/Notification'
 import Vote from './components/Vote'
 import { useQuery } from '@tanstack/react-query'
 import { getAll } from './request'
+import { NotoficationContextProvider } from './components/NotificationContext'
 
 const App = () => {
 
@@ -33,21 +34,25 @@ const App = () => {
 
 
   return (
-    <div>
-      <h3>Anecdote app</h3>
-    
-      <Notification />
-      <AnecdoteForm />
-    
-      {anecdotes.map(anecdote =>
-        <div key={anecdote.id}>
-          <div>
-            {anecdote.content}
+    <NotoficationContextProvider>
+      
+      <div>
+        <h3>Anecdote app</h3>
+      
+        <Notification />
+        <AnecdoteForm />
+      
+        {anecdotes.map(anecdote =>
+          <div key={anecdote.id}>
+            <div>
+              {anecdote.content}
+            </div>
+            <Vote anecdote={anecdote} />
           </div>
-          <Vote anecdote={anecdote} />
-        </div>
-      )}
-    </div>
+        )}
+      </div>
+
+    </NotoficationContextProvider>
   )
 }
 
