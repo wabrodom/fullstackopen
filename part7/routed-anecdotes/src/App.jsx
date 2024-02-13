@@ -8,6 +8,7 @@ import Menu from './components/Menu'
 import AnecdoteList from './components/AnecdoteList'
 import Anecdote from './components/Anecdote'
 import CreateNew from './components/CreateNew'
+import Notification from './components/Notification'
 import About from './components/About'
 import Footer from './components/Footer'
 
@@ -29,11 +30,14 @@ const App = () => {
     }
   ])
 
-  const [notification, setNotification] = useState('')
+  const [notification, setNotification] = useState(null)
 
   const addNew = (anecdote) => {
     anecdote.id = Math.round(Math.random() * 10000)
     setAnecdotes(anecdotes.concat(anecdote))
+
+    setNotification(`Created ${anecdote.content}`)
+    setTimeout(()=> setNotification(null), 5000)
   }
 
   const anecdoteById = (id) =>
@@ -48,6 +52,9 @@ const App = () => {
     }
 
     setAnecdotes(anecdotes.map(a => a.id === id ? voted : a))
+    
+    setNotification(`Voted for '${anecdote.content}'`)
+    setTimeout(()=> setNotification(null), 5000)
   }
 
   const matchPath = useMatch('/anecdotes/:idd')
@@ -58,10 +65,11 @@ const App = () => {
     <div>
       <h1>Software anecdotes</h1>
       <Menu />
+      <Notification notification={notification} />
 
       <Routes>
         <Route path='/' element={
-          <AnecdoteList anecdotes={anecdotes} />
+          <AnecdoteList anecdotes={anecdotes} vote={vote} />
         } />
         <Route path='/anecdotes/:idd' element={<Anecdote anecdote={matchAnecdote}/>} />
         <Route path='/about' element={ <About /> } />
