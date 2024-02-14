@@ -1,15 +1,11 @@
 import { useNavigate } from "react-router-dom"
 import { useField } from '../hooks/index'
-import { useRef } from "react"
 
 const CreateNew = (props) => {
 
-    const content = useField('content', 'text')
-    const author = useField('author', 'text')
-    const info = useField('info', 'url')
-    const contentRef = useRef(null)
-    const authorRef = useRef(null)
-    const infoRef = useRef(null)
+    const { reset: contentReset ,...content } = useField('content', 'text')
+    const { reset: authorReset, ...author} = useField('author', 'text')
+    const { reset: infoReset, ...info} = useField('info', 'url')
 
     const navigate = useNavigate()
   
@@ -25,9 +21,9 @@ const CreateNew = (props) => {
     }
 
     const handleReset = () => {
-      contentRef.current.value = ''
-      authorRef.current.value = ''
-      infoRef.current.value = ''
+      contentReset()
+      authorReset()
+      infoReset()
     }
   
     return (
@@ -36,15 +32,15 @@ const CreateNew = (props) => {
         <form onSubmit={handleSubmit}>
           <label>
             content 
-            <input ref={contentRef} {...content} />
+            <input {...content} />
           </label>
           <label>
             author 
-            <input ref={authorRef} {...author} />
+            <input {...author} />
           </label>
           <label>
             url for more info 
-            <input ref={infoRef} {...info} />
+            <input {...info} />
           </label>
           <button type='submit'>create</button>
           <button type='button' onClick={handleReset}>reset</button>
