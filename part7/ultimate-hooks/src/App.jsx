@@ -22,6 +22,7 @@ const useResource = (baseUrl) => {
     const response = await axios.get(baseUrl)
     const data = response.data
     setResources(data)
+
     return data
   }
 
@@ -34,7 +35,7 @@ const useResource = (baseUrl) => {
     const response = await axios.post(baseUrl, object)
     const newState = resources.concat(response.data)
     setResources(newState)
-    return newState
+    return response.data
   }
 
   const service = {
