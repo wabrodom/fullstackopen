@@ -1,0 +1,9 @@
+node_modules
+**/dist
+**/.eslintrc.cjs
+
+
+**/.git
+**/.svn
+**/.hg
+**/node_modules
