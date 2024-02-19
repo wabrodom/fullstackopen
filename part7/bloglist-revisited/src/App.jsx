@@ -1,4 +1,7 @@
 import { useState, useEffect, useRef } from 'react'
+import { useDispatch, useSelector } from 'react-redux'
+import { setMessage } from './reducers/notificationReducer'
+
 import Blog from './components/Blog'
 import LoginForm from './components/LoginForm'
 import Notification from './components/Notification'
@@ -7,12 +10,22 @@ import Togglable from './components/Togglable'
 import blogService from './services/blogs'
 import loginService from './services/login'
 
+
+/* 
+setMessage and notification reducer in progress
+*/
+
+
 const App = () => {
+  const dispatch = useDispatch()
+  const notification = useSelector(store => store)
+
   const [blogs, setBlogs] = useState([])
   const [user, setUser] = useState(null)
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
-  const [message, setMessage] = useState(null)
+
+  // const [message, setMessage] = useState(null)
   const [messageClass, setMessageClass] = useState(null)
 
   useEffect(() => {
@@ -49,9 +62,8 @@ const App = () => {
       setPassword('')
       console.log('successful login')
     } catch (excecption) {
-      setMessage('login fail')
+      dispatch(setMessage('login fail', 5))
       setMessageClass('error')
-      setTimeout(() => {setMessage(null)}, 5000)
     }
   }
 
@@ -68,7 +80,7 @@ const App = () => {
       const returnedBlog = await blogService.create(object)
       setBlogs(blogs.concat(returnedBlog))
 
-      setMessage(`a new blog ${returnedBlog.title} by ${returnedBlog.author} added`)
+      dispatch(setMessage(`a new blog ${returnedBlog.title} by ${returnedBlog.author} added jaja`, 5))
       setMessageClass('success')
       setTimeout(() => {setMessage(null)}, 5000)
     } catch(exception) {
@@ -157,7 +169,6 @@ const App = () => {
     return (
       <div>
         <Notification
-          message={message}
           messageClass={messageClass}
         />
 
@@ -177,7 +188,6 @@ const App = () => {
       <h2>Blogs</h2>
 
       <Notification
-        message={message}
         messageClass={messageClass}
       />
 
