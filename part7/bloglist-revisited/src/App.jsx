@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { setMessage } from './reducers/notificationReducer'
+import { setMessage, clearNotification } from './reducers/notificationReducer'
 
 import Blog from './components/Blog'
 import LoginForm from './components/LoginForm'
@@ -62,7 +62,8 @@ const App = () => {
       setPassword('')
       console.log('successful login')
     } catch (excecption) {
-      dispatch(setMessage('login fail', 5))
+      dispatch(setMessage('login fail'))
+      setTimeout(() => dispatch(clearNotification()), 5000)
       setMessageClass('error')
     }
   }
@@ -80,14 +81,14 @@ const App = () => {
       const returnedBlog = await blogService.create(object)
       setBlogs(blogs.concat(returnedBlog))
 
-      dispatch(setMessage(`a new blog ${returnedBlog.title} by ${returnedBlog.author} added jaja`, 5))
+      dispatch( setMessage(`a new blog ${returnedBlog.title} by ${returnedBlog.author} added`, 5))
       setMessageClass('success')
-      setTimeout(() => {setMessage(null)}, 5000)
+      setTimeout(() => dispatch(clearNotification()), 5000)
     } catch(exception) {
       // console.log(exception)
-      setMessage(exception.response.data.error + ' redirect to login again')
+      dispatch( setMessage(exception.response.data.error + ' redirect to login again') )
       setMessageClass('error')
-      setTimeout(() => {setMessage(null)}, 5000)
+      setTimeout(() => dispatch(clearNotification()), 5000)
       window.localStorage.removeItem('loggedBloglistUser')
       setUser(null)
     }
@@ -108,15 +109,15 @@ const App = () => {
       }
       copyBlogs.sort((a,b) => b.likes - a.likes)
       setBlogs(copyBlogs)
-      setMessage(`like is add to ${returnedBlog.title} by ${returnedBlog.author}`)
+      dispatch( setMessage(`like is add to ${returnedBlog.title} by ${returnedBlog.author}`))
       setMessageClass('success')
-      setTimeout(() => {setMessage(null)}, 5000)
+      setTimeout(() => dispatch(clearNotification()), 5000)
 
     } catch(exception) {
       // console.log(exception)
-      setMessage(exception.response.data.error)
+      dispatch( setMessage(exception.response.data.error) )
       setMessageClass('error')
-      setTimeout(() => {setMessage(null)}, 5000)
+      setTimeout(() => dispatch(clearNotification()), 5000)
     }
   }
 
@@ -130,9 +131,9 @@ const App = () => {
       } catch(exception) {
         const errorMessage = exception.response.data.error
         if (errorMessage === 'jwt expired') {
-          setMessage('login session expired, please login again')
+          dispatch( setMessage('login session expired, please login again') )
           setMessageClass('error')
-          setTimeout(() => {setMessage(null)}, 5000)
+          setTimeout(() => dispatch(clearNotification()), 5000)
           window.localStorage.removeItem('loggedBloglistUser')
           setUser(null)
         } else {

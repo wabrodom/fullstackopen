@@ -12,20 +12,16 @@ const notificationReducer = (state = null, action) => {
   }
 }
 
-const resetIn = (callback ,second) => {
-  return setTimeout(callback, second *1000)
+export const setMessage = (text) => {
+  return {
+    type: 'SET_MESSAGE',
+    payload: text
+  }
 }
 
-export const setMessage = (text, second) => {
-  return (dispatch) => {
-    const actionObject = {
-      type: 'SET_MESSAGE',
-      payload : text
-    }
-    dispatch(actionObject)
-    resetIn(dispatch({ type: 'RESET' }), second)
-  }
-  
-}
+export const clearNotification = () => {
+  return { type: 'RESET'}
+} 
+
 
 export default notificationReducer
