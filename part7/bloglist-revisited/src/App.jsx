@@ -11,14 +11,9 @@ import blogService from './services/blogs'
 import loginService from './services/login'
 
 
-/* 
-setMessage and notification reducer in progress
-*/
-
 
 const App = () => {
   const dispatch = useDispatch()
-  const notification = useSelector(store => store)
 
   const [blogs, setBlogs] = useState([])
   const [user, setUser] = useState(null)
@@ -144,25 +139,6 @@ const App = () => {
 
     }
   }
-
-
-  // const blogForm = () => {
-  //   const hideWhenVisible = { display: blogFormVisible ? 'none' : ''}
-  //   const showWhenVisible = { display: blogFormVisible ? '': 'none'}
-
-  //   return (
-  //     <div>
-  //       <div style={hideWhenVisible}>
-  //         <button onClick={()=> setBlogFormVisible(true)}>new note</button>
-  //       </div>
-  //       <div style={showWhenVisible}>
-  //         <BlogForm handleAddBlog={handleAddBlog} />
-  //         <button onClick={()=> setBlogFormVisible(false)}>cancel</button>
-  //       </div>
-  //     </div>
-  //   )
-  // }
-
 
 
 
