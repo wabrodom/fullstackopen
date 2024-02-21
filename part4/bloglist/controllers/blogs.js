@@ -58,9 +58,10 @@ blogsRouter.post('/',  middleware.userExtracter , async (request, response, next
     const savedBlog = await newBlog.save()
     user.blogs = user.blogs.concat(savedBlog._id)
     await user.save()
+    const populatedBlog = await savedBlog.populate('user', {username: 1, name:1})
 
     response.statusCode = 201
-    response.json(savedBlog)
+    response.json(populatedBlog)
 
   } catch(exception) {
     next(exception)
@@ -118,11 +119,14 @@ blogsRouter.put('/:id', middleware.userExtracter, async (request, response, next
       const newBlog = await Blog
         .findByIdAndUpdate(
           request.params.id, newBlogInfo, { new: true, runValidators: true })
-      response.json(newBlog)
+
+      const populatedBlog = await newBlog.populate('user', {username: 1, name:1})
+      response.json(populatedBlog)
     } else if(userId) {
       foundBlog.likes = likes
       const returnedBlog = await foundBlog.save()
-      response.json(returnedBlog)
+      const populatedBlog = await returnedBlog.populate('user', {username: 1, name:1})
+      response.json(populatedBlog)
     }
 
   } catch(exception) {
