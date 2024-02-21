@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { setMessage, clearNotification } from './reducers/notificationReducer'
+import { createBlog, setBlogs } from './reducers/blogReducer'
 
 import Blog from './components/Blog'
 import LoginForm from './components/LoginForm'
@@ -15,7 +16,7 @@ import loginService from './services/login'
 const App = () => {
   const dispatch = useDispatch()
 
-  const [blogs, setBlogs] = useState([])
+  // const [blogs, setBlogs] = useState([])
   const [user, setUser] = useState(null)
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
@@ -23,10 +24,13 @@ const App = () => {
   // const [message, setMessage] = useState(null)
   const [messageClass, setMessageClass] = useState(null)
 
+  const blogs = useSelector(state => state.blogs)
+
+
   useEffect(() => {
     blogService
       .getAll()
-      .then(blogs => setBlogs( blogs )
+      .then(blogs => dispatch(setBlogs( blogs ))
       )
   }, [])
 
@@ -74,7 +78,7 @@ const App = () => {
     blogFormRef.current.toggleVisibility()
     try {
       const returnedBlog = await blogService.create(object)
-      setBlogs(blogs.concat(returnedBlog))
+      dispatch(createBlog(returnedBlog))
 
       dispatch( setMessage(`a new blog ${returnedBlog.title} by ${returnedBlog.author} added`, 5))
       setMessageClass('success')
@@ -103,7 +107,7 @@ const App = () => {
         }
       }
       copyBlogs.sort((a,b) => b.likes - a.likes)
-      setBlogs(copyBlogs)
+      dispatch(setBlogs(copyBlogs))
       dispatch( setMessage(`like is add to ${returnedBlog.title} by ${returnedBlog.author}`))
       setMessageClass('success')
       setTimeout(() => dispatch(clearNotification()), 5000)
@@ -121,7 +125,7 @@ const App = () => {
       try {
         await blogService.remove(id)
         const newBlogs = blogs.filter(b => b.id !== id)
-        setBlogs(newBlogs)
+        dispatch(setBlogs(newBlogs))
 
       } catch(exception) {
         const errorMessage = exception.response.data.error
