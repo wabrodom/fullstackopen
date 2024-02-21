@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
+import { setUser, clearUser } from './reducers/userReducer'
 import { setMessage, clearNotification } from './reducers/notificationReducer'
 import { createBlog, setBlogs } from './reducers/blogReducer'
 
@@ -17,7 +18,7 @@ const App = () => {
   const dispatch = useDispatch()
 
   // const [blogs, setBlogs] = useState([])
-  const [user, setUser] = useState(null)
+  // const [user, setUser] = useState(null)
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
 
@@ -25,6 +26,7 @@ const App = () => {
   const [messageClass, setMessageClass] = useState(null)
 
   const blogs = useSelector(state => state.blogs)
+  const user = useSelector(state =>  state.user)
 
 
   useEffect(() => {
@@ -38,7 +40,7 @@ const App = () => {
     const loggedUserJSON = window.localStorage.getItem('loggedBloglistUser')
     if (loggedUserJSON) {
       const user = JSON.parse(loggedUserJSON)
-      setUser(user)
+      dispatch( setUser(user) )
       blogService.setToken(user.token)
     }
   }, [])
@@ -55,7 +57,7 @@ const App = () => {
 
       window.localStorage.setItem('loggedBloglistUser', JSON.stringify(objectWithToken))
 
-      setUser(objectWithToken)
+      dispatch( setUser(objectWithToken) )
       blogService.setToken(objectWithToken.token)
       setUsername('')
       setPassword('')
@@ -69,7 +71,7 @@ const App = () => {
 
   const handleLogout = () => {
     window.localStorage.removeItem('loggedBloglistUser')
-    setUser(null)
+    dispatch( clearUser() )
   }
 
   const blogFormRef = useRef()
@@ -79,6 +81,7 @@ const App = () => {
     try {
       const returnedBlog = await blogService.create(object)
       dispatch(createBlog(returnedBlog))
+      console.log(returnedBlog)
 
       dispatch( setMessage(`a new blog ${returnedBlog.title} by ${returnedBlog.author} added`, 5))
       setMessageClass('success')
@@ -89,7 +92,7 @@ const App = () => {
       setMessageClass('error')
       setTimeout(() => dispatch(clearNotification()), 5000)
       window.localStorage.removeItem('loggedBloglistUser')
-      setUser(null)
+      dispatch( clearUser () )
     }
   }
 
@@ -134,7 +137,7 @@ const App = () => {
           setMessageClass('error')
           setTimeout(() => dispatch(clearNotification()), 5000)
           window.localStorage.removeItem('loggedBloglistUser')
-          setUser(null)
+          dispatch( clearUser() ) 
         } else {
           console.log(exception.response)
         }
