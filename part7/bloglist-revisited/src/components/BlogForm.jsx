@@ -1,8 +1,6 @@
 import { useState, useRef } from 'react'
-import { createBlog } from '../reducers/blogReducer'
-import blogService from '../services/blogs'
 
-const BlogForm = ( { ref }) => {
+const BlogForm = ( { handleAddBlog }) => {
   const [title, setTitle] = useState('')
   const [author, setAuthor] = useState('')
   const [url, setUrl] = useState('')
@@ -11,24 +9,6 @@ const BlogForm = ( { ref }) => {
   const handleAuthorChange = (event) => setAuthor(event.target.value)
   const handleUrlChange = (event) => setUrl(event.target.value)
 
-  const handleAddBlog = async (object) => {
-    ref.current.toggleVisibility()
-    try {
-      const returnedBlog = await blogService.create(object)
-      createBlog(returnedBlog)
-
-      dispatch( setMessage(`a new blog ${returnedBlog.title} by ${returnedBlog.author} added`, 5))
-      // setMessageClass('success')
-      setTimeout(() => dispatch(clearNotification()), 5000)
-    } catch(exception) {
-      // console.log(exception)
-      dispatch( setMessage(exception.response.data.error + ' redirect to login again') )
-      // setMessageClass('error')
-      setTimeout(() => dispatch(clearNotification()), 5000)
-      window.localStorage.removeItem('loggedBloglistUser')
-      setUser(null)
-    }
-  }
 
   const addBlog = (event) => {
     event.preventDefault()
