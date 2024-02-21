@@ -70,24 +70,24 @@ const App = () => {
 
   const blogFormRef = useRef()
 
-  const handleAddBlog = async (object) => {
-    blogFormRef.current.toggleVisibility()
-    try {
-      const returnedBlog = await blogService.create(object)
-      setBlogs(blogs.concat(returnedBlog))
+  // const handleAddBlog = async (object) => {
+  //   blogFormRef.current.toggleVisibility()
+  //   try {
+  //     const returnedBlog = await blogService.create(object)
+  //     setBlogs(blogs.concat(returnedBlog))
 
-      dispatch( setMessage(`a new blog ${returnedBlog.title} by ${returnedBlog.author} added`, 5))
-      setMessageClass('success')
-      setTimeout(() => dispatch(clearNotification()), 5000)
-    } catch(exception) {
-      // console.log(exception)
-      dispatch( setMessage(exception.response.data.error + ' redirect to login again') )
-      setMessageClass('error')
-      setTimeout(() => dispatch(clearNotification()), 5000)
-      window.localStorage.removeItem('loggedBloglistUser')
-      setUser(null)
-    }
-  }
+  //     dispatch( setMessage(`a new blog ${returnedBlog.title} by ${returnedBlog.author} added`, 5))
+  //     setMessageClass('success')
+  //     setTimeout(() => dispatch(clearNotification()), 5000)
+  //   } catch(exception) {
+  //     // console.log(exception)
+  //     dispatch( setMessage(exception.response.data.error + ' redirect to login again') )
+  //     setMessageClass('error')
+  //     setTimeout(() => dispatch(clearNotification()), 5000)
+  //     window.localStorage.removeItem('loggedBloglistUser')
+  //     setUser(null)
+  //   }
+  // }
 
   const likeABlog = async (id) => {
     try {
@@ -172,7 +172,7 @@ const App = () => {
       <button onClick={handleLogout}>Logout</button>
 
       <Togglable buttonLabel='new blog' ref={blogFormRef}>
-        <BlogForm handleAddBlog={handleAddBlog}  />
+        <BlogForm ref={ref}/>
       </Togglable>
 
 
