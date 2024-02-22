@@ -1,0 +1,29 @@
+html { font-size: 80%; } 
+
+body{ 
+  font-size: 1.6rem; 
+}
+
+h1 {
+  color: rgb(14, 85, 14);
+  font-style: italic;
+  font-size: 2.4rem;
+}
+
+.message {
+  font-size: 1.8rem;
+  border-style: solid;
+  border-radius: 0.25rem;
+  padding: 0.25rem;
+  margin-bottom: 1rem;
+
+}
+.error {
+  color: red;
+  background: lightgrey;
+}
+
+.success {
+  color: rgb(0, 47, 255);
+  background: rgb(255, 243, 151);
+}
