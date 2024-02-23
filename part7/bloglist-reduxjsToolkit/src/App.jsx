@@ -1,5 +1,7 @@
 import { useState, useEffect, useRef } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
+
+import { setUser } from './reducers/userReducer'
 import { setMessage } from './reducers/notificationReducer'
 import { setBlogs, addBlog } from './reducers/blogReducer'
 
@@ -15,10 +17,10 @@ import loginService from './services/login'
 
 
 const App = () => {
-  const [user, setUser] = useState(null)
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
 
+  const user = useSelector(state => state.user)
   const blogs = useSelector(state => state.blog)
   const dispatch = useDispatch()
 
@@ -34,7 +36,7 @@ const App = () => {
     const loggedUserJSON = window.localStorage.getItem('loggedBloglistUser')
     if (loggedUserJSON) {
       const user = JSON.parse(loggedUserJSON)
-      setUser(user)
+      dispatch(setUser(user))
       blogService.setToken(user.token)
     }
   }, [])
@@ -51,7 +53,7 @@ const App = () => {
 
       window.localStorage.setItem('loggedBloglistUser', JSON.stringify(objectWithToken))
 
-      setUser(objectWithToken)
+      dispatch(setUser(objectWithToken))
       blogService.setToken(objectWithToken.token)
       setUsername('')
       setPassword('')
@@ -63,7 +65,7 @@ const App = () => {
 
   const handleLogout = () => {
     window.localStorage.removeItem('loggedBloglistUser')
-    setUser(null)
+    dispatch(setUser(null))
   }
 
   const blogFormRef = useRef()
@@ -87,7 +89,7 @@ const App = () => {
       ))
 
       window.localStorage.removeItem('loggedBloglistUser')
-      setUser(null)
+      dispatch(setUser(null))
     }
   }
 
@@ -134,7 +136,7 @@ const App = () => {
         if (errorMessage === 'jwt expired') {
           dispatch(setMessage('login session expired, please login again', 'error' , 5))
           window.localStorage.removeItem('loggedBloglistUser')
-          setUser(null)
+          dispatch(setUser(null))
         } else {
           console.log(exception.response)
         }
