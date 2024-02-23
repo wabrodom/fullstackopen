@@ -9,7 +9,7 @@ const BlogForm = ({ handleAddBlog }) => {
   const handleAuthorChange = (event) => setAuthor(event.target.value)
   const handleUrlChange = (event) => setUrl(event.target.value)
 
-  const addBlog = (event) => {
+  const addBlog = async (event) => {
     event.preventDefault()
     handleAddBlog({
       title: title,

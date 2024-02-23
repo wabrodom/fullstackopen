@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from 'react-redux'
 
 import { setUser } from './reducers/userReducer'
 import { setMessage } from './reducers/notificationReducer'
-import { setBlogs, addBlog } from './reducers/blogReducer'
+import { setBlogs, addBlog, initializeBlogs } from './reducers/blogReducer'
 
 import Blog from './components/Blog'
 import LoginForm from './components/LoginForm'
@@ -26,10 +26,7 @@ const App = () => {
 
 
   useEffect(() => {
-    blogService
-      .getAll()
-      .then(blogs => dispatch(setBlogs( blogs ))
-      )
+    dispatch(initializeBlogs())
   }, [])
 
   useEffect(() => {
@@ -75,6 +72,8 @@ const App = () => {
     try {
       const returnedBlog = await blogService.create(object)
       dispatch(addBlog(returnedBlog))
+      // dispatch(addBlog(object))
+
       dispatch(setMessage(
         `a new blog ${returnedBlog.title} by ${returnedBlog.author} added`,
         'success'
