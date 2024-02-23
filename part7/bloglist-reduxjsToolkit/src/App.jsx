@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from 'react'
-import { useDispatch } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import { setMessage } from './reducers/notificationReducer'
+import { setBlogs, addBlog } from './reducers/blogReducer'
 
 import Blog from './components/Blog'
 import LoginForm from './components/LoginForm'
@@ -14,17 +15,18 @@ import loginService from './services/login'
 
 
 const App = () => {
-  const [blogs, setBlogs] = useState([])
   const [user, setUser] = useState(null)
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
 
+  const blogs = useSelector(state => state.blog)
   const dispatch = useDispatch()
+
 
   useEffect(() => {
     blogService
       .getAll()
-      .then(blogs => setBlogs( blogs )
+      .then(blogs => dispatch(setBlogs( blogs ))
       )
   }, [])
 
@@ -70,9 +72,7 @@ const App = () => {
     blogFormRef.current.toggleVisibility()
     try {
       const returnedBlog = await blogService.create(object)
-      setBlogs(blogs.concat(returnedBlog))
-
-      console.log(returnedBlog)
+      dispatch(addBlog(returnedBlog))
       dispatch(setMessage(
         `a new blog ${returnedBlog.title} by ${returnedBlog.author} added`,
         'success'
@@ -105,7 +105,7 @@ const App = () => {
         }
       }
       copyBlogs.sort((a,b) => b.likes - a.likes)
-      setBlogs(copyBlogs)
+      dispatch(setBlogs(copyBlogs))
       dispatch(setMessage(
         `like is add to ${returnedBlog.title} by ${returnedBlog.author}`,
          'success',
@@ -127,7 +127,7 @@ const App = () => {
       try {
         await blogService.remove(id)
         const newBlogs = blogs.filter(b => b.id !== id)
-        setBlogs(newBlogs)
+        dispatch(setBlogs(newBlogs))
 
       } catch(exception) {
         const errorMessage = exception.response.data.error
