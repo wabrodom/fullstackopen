@@ -18,7 +18,6 @@ const App = () => {
   const [user, setUser] = useState(null)
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
-  const [messageClass, setMessageClass] = useState(null)
 
   const dispatch = useDispatch()
 
@@ -56,9 +55,7 @@ const App = () => {
       setPassword('')
       console.log('successful login')
     } catch (excecption) {
-      dispatch(setMessage('login fail', 5))
-      setMessageClass('error')
-      // setTimeout(() => {setMessage(null)}, 5000)
+      dispatch(setMessage('login fail', 'error', 5))
     }
   }
 
@@ -75,14 +72,20 @@ const App = () => {
       const returnedBlog = await blogService.create(object)
       setBlogs(blogs.concat(returnedBlog))
 
-      dispatch(setMessage(`a new blog ${returnedBlog.title} by ${returnedBlog.author} added`, 5))
-      setMessageClass('success')
-      // setTimeout(() => {setMessage(null)}, 5000)
+      console.log(returnedBlog)
+      dispatch(setMessage(
+        `a new blog ${returnedBlog.title} by ${returnedBlog.author} added`,
+        'success'
+        , 5
+      ))
     } catch(exception) {
       // console.log(exception)
-      dispatch(setMessage(exception.response.data.error + ' redirect to login again', 5))
-      setMessageClass('error')
-      // setTimeout(() => {setMessage(null)}, 5000)
+      dispatch(setMessage(
+        exception.response.data.error + ' redirect to login again',
+        'success',
+         5
+      ))
+
       window.localStorage.removeItem('loggedBloglistUser')
       setUser(null)
     }
@@ -103,15 +106,19 @@ const App = () => {
       }
       copyBlogs.sort((a,b) => b.likes - a.likes)
       setBlogs(copyBlogs)
-      dispatch(setMessage(`like is add to ${returnedBlog.title} by ${returnedBlog.author}`, 5))
-      setMessageClass('success')
-      // setTimeout(() => {setMessage(null)}, 5000)
+      dispatch(setMessage(
+        `like is add to ${returnedBlog.title} by ${returnedBlog.author}`,
+         'success',
+          5
+        ))
 
     } catch(exception) {
       // console.log(exception)
-      dispatch(setMessage(exception.response.data.erro, 5))
-      setMessageClass('error')
-      // setTimeout(() => {setMessage(null)}, 5000)
+      dispatch(setMessage(
+        exception.response.data.erro,
+        'error',
+        5
+      ))
     }
   }
 
@@ -125,9 +132,7 @@ const App = () => {
       } catch(exception) {
         const errorMessage = exception.response.data.error
         if (errorMessage === 'jwt expired') {
-          dispatch(setMessage('login session expired, please login again', 5))
-          setMessageClass('error')
-          // setTimeout(() => {setMessage(null)}, 5000)
+          dispatch(setMessage('login session expired, please login again', 'error' , 5))
           window.localStorage.removeItem('loggedBloglistUser')
           setUser(null)
         } else {
@@ -139,33 +144,10 @@ const App = () => {
     }
   }
 
-
-  // const blogForm = () => {
-  //   const hideWhenVisible = { display: blogFormVisible ? 'none' : ''}
-  //   const showWhenVisible = { display: blogFormVisible ? '': 'none'}
-
-  //   return (
-  //     <div>
-  //       <div style={hideWhenVisible}>
-  //         <button onClick={()=> setBlogFormVisible(true)}>new note</button>
-  //       </div>
-  //       <div style={showWhenVisible}>
-  //         <BlogForm handleAddBlog={handleAddBlog} />
-  //         <button onClick={()=> setBlogFormVisible(false)}>cancel</button>
-  //       </div>
-  //     </div>
-  //   )
-  // }
-
-
-
-
   if (user === null) {
     return (
       <div>
-        <Notification
-          messageClass={messageClass}
-        />
+        <Notification/>
 
         <LoginForm
           handleLogin={handleLogin}
@@ -182,9 +164,7 @@ const App = () => {
     <section>
       <h2>Blogs</h2>
 
-      <Notification
-        messageClass={messageClass}
-      />
+      <Notification />
 
       <p>{user.name} logged in</p>
       <button onClick={handleLogout}>Logout</button>
