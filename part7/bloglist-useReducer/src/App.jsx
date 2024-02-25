@@ -1,4 +1,6 @@
 import { useState, useEffect, useRef, useReducer } from 'react'
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
+
 import Blog from './components/Blog'
 import LoginForm from './components/LoginForm'
 import Notification from './components/Notification'
@@ -12,20 +14,36 @@ import { useNotiDispatch } from './contexts/NotificationContext'
 
 
 const App = () => {
-  const setMessage =useNotiDispatch()
+  const setMessage = useNotiDispatch()
+  const queryClient = useQueryClient()
 
-  const [blogs, setBlogs] = useState([])
+  // const [blogs, setBlogs] = useState([])
   const [user, setUser] = useState(null)
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
 
+  const result = useQuery({
+    queryKey: ['blogs'],
+    queryFn: blogService.getAll
+  })
 
-  useEffect(() => {
-    blogService
-      .getAll()
-      .then(blogs => setBlogs( blogs )
+  const newBlogMutation = useMutation({
+    mutationFn: blogService.create,
+    onSuccess: (newBlog) => {
+      queryClient.invalidateQueries({ queryKey: ['blogs']})
+      setMessage(
+        `a new blog ${newBlog.title} by ${newBlog.author} added`,
+        'success',
+         5
       )
-  }, [])
+    },
+    onError: (error) => {
+      setMessage(error + ' redirect to login again', 'errer', 5)
+      window.localStorage.removeItem('loggedBloglistUser')
+      setUser(null)
+    }
+  })
+
 
   useEffect(() => {
     const loggedUserJSON = window.localStorage.getItem('loggedBloglistUser')
@@ -35,6 +53,9 @@ const App = () => {
       blogService.setToken(user.token)
     }
   }, [])
+
+  
+  const blogs = result.data
 
   const handleOnChangeUsername = ({ target }) => setUsername(target.value)
   const handleOnChangePassword = ({ target }) => setPassword(target.value)
@@ -68,16 +89,9 @@ const App = () => {
   const handleAddBlog = async (object) => {
     blogFormRef.current.toggleVisibility()
     try {
-      const returnedBlog = await blogService.create(object)
-      setBlogs(blogs.concat(returnedBlog))
-
-      setMessage(`a new blog ${returnedBlog.title} by ${returnedBlog.author} added`, 'success', 5)
- 
+      newBlogMutation.mutate(object)
     } catch(exception) {
       // console.log(exception)
-      setMessage(exception.response.data.error + ' redirect to login again', 'errer', 5)
-      window.localStorage.removeItem('loggedBloglistUser')
-      setUser(null)
     }
   }
 
@@ -125,6 +139,9 @@ const App = () => {
     }
   }
 
+  if ( result.isLoading ) {
+    return <div>loading data...</div>  
+  }
 
 
   if (user === null) {
