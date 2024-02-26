@@ -34,6 +34,13 @@ const update = async (id, object) => {
   return response.data
 }
 
+const likeABlog = async (id) => {
+  const foundBlog = await getABlog(id)
+  foundBlog.likes = foundBlog.likes + 1
+  const returnedBlog = await update(id, foundBlog)
+  return returnedBlog
+}
+
 const remove = async (id) => {
   const config ={
     headers: { Authorization: token }
@@ -48,6 +55,7 @@ export default {
   getABlog,
   create,
   update,
+  likeABlog,
   remove,
   setToken,
 }

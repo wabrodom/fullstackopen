@@ -7,43 +7,73 @@ import Notification from './components/Notification'
 import BlogForm from './components/BlogForm'
 import Togglable from './components/Togglable'
 import blogService from './services/blogs'
-import loginService from './services/login'
 import { useNotiDispatch } from './contexts/NotificationContext'
-
-
+import { 
+  useCurrentUser, 
+  useSetUser ,
+  useLoginDispatch, 
+  useResetUser
+} from './contexts/loginContext'
 
 
 const App = () => {
-  const setMessage = useNotiDispatch()
   const queryClient = useQueryClient()
+  const setMessage = useNotiDispatch()
+  const user = useCurrentUser()
+  const setUser = useSetUser()
+  const loginUser = useLoginDispatch()
+  const resetUser = useResetUser()
 
-  // const [blogs, setBlogs] = useState([])
-  const [user, setUser] = useState(null)
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
 
-  const result = useQuery({
+
+ const result = useQuery({
     queryKey: ['blogs'],
-    queryFn: blogService.getAll
+    queryFn: blogService.getAll,
+    onSuccess: (arrayOfObject) => {
+      const copyBlogs = [...arrayOfObject]
+      return copyBlogs.sort((a,b) => b.likes - a.likes)
+    } 
   })
 
-  const newBlogMutation = useMutation({
+ const newBlogMutation = useMutation({
     mutationFn: blogService.create,
     onSuccess: (newBlog) => {
       queryClient.invalidateQueries({ queryKey: ['blogs']})
-      setMessage(
-        `a new blog ${newBlog.title} by ${newBlog.author} added`,
-        'success',
-         5
-      )
+      const message =  `a new blog ${newBlog.title} by ${newBlog.author} added`
+      setMessage(message,'success',5)
     },
     onError: (error) => {
-      setMessage(error + ' redirect to login again', 'errer', 5)
-      window.localStorage.removeItem('loggedBloglistUser')
-      setUser(null)
+      setMessage(error.message + ' redirect to login again', 'errer', 5)
+      // window.localStorage.removeItem('loggedBloglistUser')
+      resetUser()
     }
   })
 
+
+ const likeBlogMutation = useMutation({
+    mutationFn: blogService.likeABlog,
+    onSuccess: (newblog) => {
+      queryClient.invalidateQueries({ queryKey: ['blogs']})
+      const message = `like is add to ${newblog.title} by ${newblog.author}`
+      setMessage(message ,'success',5)
+    },
+    onError: (error) => {
+      setMessage(error.message, 'error', 5)
+    }
+  })
+
+ const removeBlogMutataion = useMutation({
+    mutationFn: blogService.remove,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['blogs']})
+    },
+    onError: (error) => {
+      setMessage(error.message, 'error login again', 5)
+      resetUser()
+    }
+  })
 
   useEffect(() => {
     const loggedUserJSON = window.localStorage.getItem('loggedBloglistUser')
@@ -63,25 +93,23 @@ const App = () => {
   const handleLogin = async (event) => {
     event.preventDefault()
     try {
-      const objectWithToken = await loginService.login({
-        username, password
-      })
-
-      window.localStorage.setItem('loggedBloglistUser', JSON.stringify(objectWithToken))
-
-      setUser(objectWithToken)
-      blogService.setToken(objectWithToken.token)
+      const responseBack = (loginUser({username, password}) ) 
+      const resolvetoErrorObject = await responseBack
+      if (resolvetoErrorObject instanceof Error) {
+        throw resolvetoErrorObject
+      }
       setUsername('')
       setPassword('')
       console.log('successful login')
-    } catch (excecption) {
+    } catch (err) {
+      setUsername('')
+      setPassword('')
       setMessage('login failed ja', 'error', 5)
     }
   }
 
   const handleLogout = () => {
-    window.localStorage.removeItem('loggedBloglistUser')
-    setUser(null)
+    resetUser()
   }
 
   const blogFormRef = useRef()
@@ -97,43 +125,26 @@ const App = () => {
 
   const likeABlog = async (id) => {
     try {
-      const foundBlog = await blogService.getABlog(id)
-      foundBlog.likes = foundBlog.likes +1
-      const returnedBlog = await blogService.update(id, foundBlog)
-
-      const copyBlogs = [...blogs]
-
-      for (let i =0; i < copyBlogs.length; i++) {
-        if (copyBlogs[i].id === id) {
-          copyBlogs[i] = returnedBlog
-        }
-      }
-      copyBlogs.sort((a,b) => b.likes - a.likes)
-      setBlogs(copyBlogs)
-      setMessage(`like is add to ${returnedBlog.title} by ${returnedBlog.author}`, 'success', 5)
+      likeBlogMutation.mutate(id)
     } catch(exception) {
       // console.log(exception)
-      setMessage(exception.response.data.error, 'error', 5)
     }
   }
 
   const removeAblog = async (id, blog) => {
     if (window.confirm(`remove ${blog.title} by ${blog.author}`)) {
       try {
-        await blogService.remove(id)
-        const newBlogs = blogs.filter(b => b.id !== id)
-        setBlogs(newBlogs)
-
+        removeBlogMutataion.mutate(id)
       } catch(exception) {
-        const errorMessage = exception.response.data.error
-        if (errorMessage === 'jwt expired') {
-          setMessage('login session expired, please login again', 'error', 5)
-          window.localStorage.removeItem('loggedBloglistUser')
-          setUser(null)
-        } else {
-          console.log(exception.response)
-        }
-
+        // console.log(exception)
+        // const errorMessage = exception.response.data.error
+        // if (errorMessage === 'jwt expired') {
+        //   setMessage('login session expired, please login again', 'error', 5)
+        //   window.localStorage.removeItem('loggedBloglistUser')
+        //   resetUser()
+        // } else {
+        //   console.log(exception.response)
+        // }
       }
 
     }
