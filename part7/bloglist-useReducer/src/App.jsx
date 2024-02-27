@@ -1,5 +1,9 @@
 import { useState, useEffect, useRef, useReducer } from 'react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
+import {
+  BrowserRouter as Router,
+  Routes, Route, Link
+} from 'react-router-dom'
 
 import Blog from './components/Blog'
 import LoginForm from './components/LoginForm'
@@ -14,6 +18,9 @@ import {
   useLoginDispatch, 
   useResetUser
 } from './contexts/loginContext'
+import Blogs from './components/Blogs'
+import NewBlogTogglable from './components/NewBlogTogglable'
+import Users from './components/Users'
 
 
 const App = () => {
@@ -154,51 +161,56 @@ const App = () => {
     return <div>loading data...</div>  
   }
 
-
-  if (user === null) {
-    return (
- 
-        <div>
-          <Notification />
-
-          <LoginForm
-            handleLogin={handleLogin}
-            handleOnChangeUsername={handleOnChangeUsername}
-            handleOnChangePassword={handleOnChangePassword}
-            username={username}
-            password={password}
-          />
-        </div>
-    
-    )
-  }
-
+  const padding ={ padding : 5 }
   return (
+    <Router>
+      <div>
+        <Link style={padding} to='/'>home</Link>
+        <Link style={padding} to='/blogs'>blogs</Link>
+        <Link style={padding} to='/users'>users</Link>
+      </div>
    
       <section>
         <h2>Blogs</h2>
 
         <Notification/>
 
-        <p>{user.name} logged in</p>
-        <button onClick={handleLogout}>Logout</button>
+      </section>
 
-        <Togglable buttonLabel='new blog' ref={blogFormRef}>
-          <BlogForm handleAddBlog={handleAddBlog}  />
-        </Togglable>
-
-
-        {blogs.map(blog =>
-          <Blog
-            key={blog.id}
-            blog={blog}
+      <Routes> 
+        <Route path='/blogs' element={   
+          <Blogs
+            blogs={blogs}
             handleLike={likeABlog}
             handleDelete={removeAblog}
-            currentUser={user.id}
-          />
-        )}
-      </section>
-   
+          />}
+        />
+        <Route path='/users' element={<Users/>} />
+        <Route path='/' element={
+          user === null 
+          ?
+            <LoginForm
+              handleLogin={handleLogin}
+              handleOnChangeUsername={handleOnChangeUsername}
+              handleOnChangePassword={handleOnChangePassword}
+              username={username}
+              password={password}
+            />
+          :  
+          <div>
+            <p>{user.name} logged in</p>
+                <button onClick={handleLogout}>Logout</button>
+              <NewBlogTogglable
+                buttonLabel='new blog'
+                passedRef={blogFormRef}
+                handleAddBlog={handleAddBlog}
+              />
+          </div>
+
+        } />
+      </Routes>
+
+    </Router>
   )
 }
 
