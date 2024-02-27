@@ -8,6 +8,7 @@ import {
 import Blog from './components/Blog'
 import LoginForm from './components/LoginForm'
 import Notification from './components/Notification'
+import User from './components/User'
 import BlogForm from './components/BlogForm'
 import Togglable from './components/Togglable'
 import blogService from './services/blogs'
@@ -21,6 +22,7 @@ import {
 import Blogs from './components/Blogs'
 import NewBlogTogglable from './components/NewBlogTogglable'
 import Users from './components/Users'
+import MainLoggedIn from './components/MainLoggedIn';
 
 
 const App = () => {
@@ -97,8 +99,7 @@ const App = () => {
   const handleOnChangeUsername = ({ target }) => setUsername(target.value)
   const handleOnChangePassword = ({ target }) => setPassword(target.value)
 
-  const handleLogin = async (event) => {
-    event.preventDefault()
+  const handleLogin = async () => {
     try {
       const responseBack = (loginUser({username, password}) ) 
       const resolvetoErrorObject = await responseBack
@@ -168,14 +169,17 @@ const App = () => {
         <Link style={padding} to='/'>home</Link>
         <Link style={padding} to='/blogs'>blogs</Link>
         <Link style={padding} to='/users'>users</Link>
+        {user
+          ? <MainLoggedIn 
+              user={user}
+              handleLogout={handleLogout}
+            />
+          : <Link style={padding} to='/login'>login</Link>
+        }
       </div>
    
-      <section>
-        <h2>Blogs</h2>
 
-        <Notification/>
-
-      </section>
+      <Notification/>
 
       <Routes> 
         <Route path='/blogs' element={   
@@ -185,10 +189,10 @@ const App = () => {
             handleDelete={removeAblog}
           />}
         />
+
         <Route path='/users' element={<Users/>} />
-        <Route path='/' element={
-          user === null 
-          ?
+        <Route path='/users/:id' element={<User blogs={blogs} />} />
+        <Route path='/login' element={
             <LoginForm
               handleLogin={handleLogin}
               handleOnChangeUsername={handleOnChangeUsername}
@@ -196,18 +200,21 @@ const App = () => {
               username={username}
               password={password}
             />
-          :  
-          <div>
-            <p>{user.name} logged in</p>
-                <button onClick={handleLogout}>Logout</button>
-              <NewBlogTogglable
-                buttonLabel='new blog'
-                passedRef={blogFormRef}
-                handleAddBlog={handleAddBlog}
-              />
-          </div>
 
         } />
+
+        <Route path='/' element={
+          user ?
+          <div>
+            <NewBlogTogglable
+              buttonLabel='new blog'
+              passedRef={blogFormRef}
+              handleAddBlog={handleAddBlog}
+            />
+          </div>
+          : <p>please log in</p>
+        }>home</Route>
+
       </Routes>
 
     </Router>

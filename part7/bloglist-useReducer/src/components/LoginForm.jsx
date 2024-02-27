@@ -1,4 +1,5 @@
 import PropTypes from 'prop-types'
+import { useNavigate } from 'react-router-dom'
 
 const LoginForm = (props) => {
   const handleLogin = props.handleLogin
@@ -7,8 +8,16 @@ const LoginForm = (props) => {
   const username = props.username
   const password = props.password
 
+  const onSubmit = (e) => {
+    e.preventDefault()
+    handleLogin()
+    navigate('/')
+  }
+
+  const navigate = useNavigate()
+
   return (
-    <form onSubmit={handleLogin}>
+    <form onSubmit={onSubmit}>
       <div>
         Username
         <input
