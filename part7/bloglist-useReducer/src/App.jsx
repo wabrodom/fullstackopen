@@ -4,13 +4,6 @@ import {
   BrowserRouter as Router,
   Routes, Route, Link
 } from 'react-router-dom'
-
-import Blog from './components/Blog'
-import LoginForm from './components/LoginForm'
-import Notification from './components/Notification'
-import User from './components/User'
-import BlogForm from './components/BlogForm'
-import Togglable from './components/Togglable'
 import blogService from './services/blogs'
 import { useNotiDispatch } from './contexts/NotificationContext'
 import { 
@@ -19,10 +12,15 @@ import {
   useLoginDispatch, 
   useResetUser
 } from './contexts/loginContext'
-import Blogs from './components/Blogs'
+
+import LoginForm from './components/LoginForm'
+import Notification from './components/Notification'
+import User from './components/User'
 import NewBlogTogglable from './components/NewBlogTogglable'
 import Users from './components/Users'
-import MainLoggedIn from './components/MainLoggedIn';
+import MainLoggedIn from './components/MainLoggedIn'
+import BlogsSimpleVersion from './components/BlogsSimpleVersion'
+import BlogSimpleVersion from './components/BlogSimpleVersion'
 
 
 const App = () => {
@@ -95,6 +93,7 @@ const App = () => {
 
   
   const blogs = result.data
+
 
   const handleOnChangeUsername = ({ target }) => setUsername(target.value)
   const handleOnChangePassword = ({ target }) => setPassword(target.value)
@@ -182,16 +181,23 @@ const App = () => {
       <Notification/>
 
       <Routes> 
-        <Route path='/blogs' element={   
-          <Blogs
+        <Route path='/blogs' element={<BlogsSimpleVersion blogs={blogs}/>} />
+        <Route path='/blogs/:id' element={
+          <BlogSimpleVersion
             blogs={blogs}
             handleLike={likeABlog}
             handleDelete={removeAblog}
-          />}
+          />} 
         />
 
         <Route path='/users' element={<Users/>} />
-        <Route path='/users/:id' element={<User blogs={blogs} />} />
+        <Route path='/users/:id' element={
+          <User 
+            blogs={blogs}
+            passedRef={blogFormRef}
+            handleAddBlog={handleAddBlog} 
+          />
+        } />
         <Route path='/login' element={
             <LoginForm
               handleLogin={handleLogin}
@@ -206,6 +212,8 @@ const App = () => {
         <Route path='/' element={
           user ?
           <div>
+            <h2>Valuable Blogs to Read</h2>
+            <p>Lorem ipsum, dolor sit amet consectetur adipisicing elit. Dolore aliquid, saepe nemo est quia nihil quae eos adipisci amet dicta vero similique eum beatae hic suscipit nisi magni laudantium facilis ratione fugit aut reprehenderit id sint. Voluptatum deserunt labore vel qui dolorem quibusdam, optio reiciendis, fugiat nulla quasi facere laudantium.</p>
             <NewBlogTogglable
               buttonLabel='new blog'
               passedRef={blogFormRef}
