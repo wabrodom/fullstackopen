@@ -50,7 +50,7 @@ export const useLoginDispatch = () => {
       dispatch({ type: 'LOGIN', payload: objectWithToken})
 
     } catch (excecption) {
-      return await excecption
+      return excecption
     }
   }
 }

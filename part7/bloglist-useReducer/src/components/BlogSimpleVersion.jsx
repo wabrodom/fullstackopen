@@ -3,10 +3,8 @@ import { useCurrentUser } from "../contexts/loginContext"
 
 const BlogSimpleVersion = ({ blogs, handleLike, handleDelete }) =>  {
   const currentUser = useCurrentUser()
-  const blogId = useParams().id
-  
-  const blog = blogs.find(b => b.id === blogId)
-  //typeof blogId and b.id are both string
+  const id = useParams().id
+  const blog = blogs.find(b => b.id === id)
   
   const blogStyle = {
     paddingTop: 10,
@@ -30,7 +28,7 @@ const BlogSimpleVersion = ({ blogs, handleLike, handleDelete }) =>  {
 
    
         <div>
-          <a href={ `${blog.url}` }>{blog.url}</a>
+          <a href={ `${blog.url}` } target="_blank" >{blog.url}</a>
         </div>
 
         <div>

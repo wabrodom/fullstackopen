@@ -2,7 +2,7 @@ import { useState, useEffect, useRef, useReducer } from 'react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import {
   BrowserRouter as Router,
-  Routes, Route, Link
+  Routes, Route, Link, Navigate, useMatch
 } from 'react-router-dom'
 import blogService from './services/blogs'
 import { useNotiDispatch } from './contexts/NotificationContext'
@@ -91,9 +91,7 @@ const App = () => {
     }
   }, [])
 
-  
   const blogs = result.data
-
 
   const handleOnChangeUsername = ({ target }) => setUsername(target.value)
   const handleOnChangePassword = ({ target }) => setPassword(target.value)
@@ -161,19 +159,19 @@ const App = () => {
     return <div>loading data...</div>  
   }
 
+
   const padding ={ padding : 5 }
+  const navBar = { backgroundColor: 'lightgrey'}
   return (
-    <Router>
-      <div>
-        <Link style={padding} to='/'>home</Link>
-        <Link style={padding} to='/blogs'>blogs</Link>
+    <div>
+      <div style={navBar} >
+        <Link style={padding} to='/'>blogs</Link>
         <Link style={padding} to='/users'>users</Link>
-        {user
-          ? <MainLoggedIn 
+        {user &&
+           <MainLoggedIn 
               user={user}
               handleLogout={handleLogout}
             />
-          : <Link style={padding} to='/login'>login</Link>
         }
       </div>
    
@@ -181,7 +179,10 @@ const App = () => {
       <Notification/>
 
       <Routes> 
-        <Route path='/blogs' element={<BlogsSimpleVersion blogs={blogs}/>} />
+        <Route path='/blogs' element={user 
+          ? <BlogsSimpleVersion blogs={blogs}/> 
+          : <Navigate replace to ='/login' /> }  
+        />
         <Route path='/blogs/:id' element={
           <BlogSimpleVersion
             blogs={blogs}
@@ -190,7 +191,7 @@ const App = () => {
           />} 
         />
 
-        <Route path='/users' element={<Users/>} />
+        <Route path='/users' element={user ? <Users/> : <Navigate replace to ='/login'/>} />
         <Route path='/users/:id' element={
           <User 
             blogs={blogs}
@@ -209,23 +210,26 @@ const App = () => {
 
         } />
 
-        <Route path='/' element={
-          user ?
-          <div>
-            <h2>Valuable Blogs to Read</h2>
-            <p>Lorem ipsum, dolor sit amet consectetur adipisicing elit. Dolore aliquid, saepe nemo est quia nihil quae eos adipisci amet dicta vero similique eum beatae hic suscipit nisi magni laudantium facilis ratione fugit aut reprehenderit id sint. Voluptatum deserunt labore vel qui dolorem quibusdam, optio reiciendis, fugiat nulla quasi facere laudantium.</p>
-            <NewBlogTogglable
-              buttonLabel='new blog'
-              passedRef={blogFormRef}
-              handleAddBlog={handleAddBlog}
-            />
+        <Route path='/' element={user
+          ? <Navigate replace to ='/blogs' /> 
+          : <div>
+              <p>
+              worth reading blogs
+              </p>
+              <LoginForm
+                handleLogin={handleLogin}
+                handleOnChangeUsername={handleOnChangeUsername}
+                handleOnChangePassword={handleOnChangePassword}
+                username={username}
+                password={password}
+              />
+
           </div>
-          : <p>please log in</p>
-        }>home</Route>
+        } />
 
       </Routes>
 
-    </Router>
+    </div>
   )
 }
 

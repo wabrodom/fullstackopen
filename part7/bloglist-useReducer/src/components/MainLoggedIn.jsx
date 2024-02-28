@@ -3,12 +3,12 @@ const MainLoggedIn = ({ user, handleLogout }) => {
 
   return (
     <span>
-      <span>
+      <em>
         <Link to={`users/${user.id}`}>
           {user.name} 
         </Link> logged in 
-      </span>
-      <button onClick={handleLogout}>Logout</button>
+      </em>
+      <button onClick={handleLogout}> Log out</button>
     </span>
   )
 }

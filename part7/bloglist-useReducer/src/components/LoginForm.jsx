@@ -8,13 +8,14 @@ const LoginForm = (props) => {
   const username = props.username
   const password = props.password
 
+  const navigate = useNavigate()
+
   const onSubmit = (e) => {
     e.preventDefault()
     handleLogin()
     navigate('/')
   }
 
-  const navigate = useNavigate()
 
   return (
     <form onSubmit={onSubmit}>
