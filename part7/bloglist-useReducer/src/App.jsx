@@ -82,6 +82,17 @@ const App = () => {
     }
   })
 
+  const addCommentMutation = useMutation({
+    mutationFn: blogService.comment,
+    onSuccess: () => {
+      queryClient.invalidateQueries( { queryKey: ['blogs']})
+    },
+    onError: (error) => {
+      setMessage(error.message, 'error login again', 5)
+      resetUser()
+    }
+  })
+
   useEffect(() => {
     const loggedUserJSON = window.localStorage.getItem('loggedBloglistUser')
     if (loggedUserJSON) {
@@ -155,6 +166,14 @@ const App = () => {
     }
   }
 
+  const handleAddedComment = async (blogId, object) => {
+    try {
+     addCommentMutation.mutate({ blogId, object })
+    } catch(exception) {
+      // console.log(exception)
+    }
+  }
+
   if ( result.isLoading ) {
     return <div>loading data...</div>  
   }
@@ -188,6 +207,7 @@ const App = () => {
             blogs={blogs}
             handleLike={likeABlog}
             handleDelete={removeAblog}
+            handleAddedComment={handleAddedComment}
           />} 
         />
 

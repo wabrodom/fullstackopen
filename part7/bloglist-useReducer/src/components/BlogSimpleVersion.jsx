@@ -1,10 +1,13 @@
 import { useParams } from "react-router-dom"
 import { useCurrentUser } from "../contexts/loginContext"
+import CommentFrom from "./CommentForm"
+import Comments from "./Comment"
 
-const BlogSimpleVersion = ({ blogs, handleLike, handleDelete }) =>  {
-  const currentUser = useCurrentUser()
+const BlogSimpleVersion = ({ blogs, handleLike, handleDelete, handleAddedComment }) =>  {
+  const currentUserId = useCurrentUser().id
   const id = useParams().id
   const blog = blogs.find(b => b.id === id)
+  const commentsArray = blog.comments
   
   const blogStyle = {
     paddingTop: 10,
@@ -20,8 +23,10 @@ const BlogSimpleVersion = ({ blogs, handleLike, handleDelete }) =>  {
   )
 
   return (
-    <div style={blogStyle} className='blog'>
-     
+    <div className='blog'>
+      <section  style={blogStyle}>
+
+      
         <h2>
           {blog.title}
         </h2>
@@ -44,9 +49,17 @@ const BlogSimpleVersion = ({ blogs, handleLike, handleDelete }) =>  {
           <p>added by {blog.user.username}</p>
         </div>
         <div>
-          {currentUser === creator ? removeButton(): ''}
+          {currentUserId === creator ? removeButton(): ''}
         </div>
 
+        </section>
+        <section>
+          <CommentFrom 
+            handleAddedComment={handleAddedComment}
+            blogId={id}
+          />
+          <Comments comments={commentsArray} />
+        </section>
     </div>
   )
 }
