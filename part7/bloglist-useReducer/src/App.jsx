@@ -2,7 +2,7 @@ import { useState, useEffect, useRef, useReducer } from 'react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import {
   BrowserRouter as Router,
-  Routes, Route, Link, Navigate, useMatch
+  Routes, Route, Link, Navigate, useMatch, useNavigate
 } from 'react-router-dom'
 import blogService from './services/blogs'
 import { useNotiDispatch } from './contexts/NotificationContext'
@@ -33,7 +33,7 @@ const App = () => {
 
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
-
+  const navigate = useNavigate()
 
  const result = useQuery({
     queryKey: ['blogs'],
@@ -68,6 +68,7 @@ const App = () => {
     },
     onError: (error) => {
       setMessage(error.message, 'error', 5)
+      resetUser()
     }
   })
 
@@ -126,6 +127,7 @@ const App = () => {
 
   const handleLogout = () => {
     resetUser()
+    navigate('/login')
   }
 
   const blogFormRef = useRef()
@@ -183,6 +185,7 @@ const App = () => {
   const navBar = { backgroundColor: 'lightgrey'}
   return (
     <div>
+      
       <div style={navBar} >
         <Link style={padding} to='/'>blogs</Link>
         <Link style={padding} to='/users'>users</Link>
@@ -193,13 +196,18 @@ const App = () => {
             />
         }
       </div>
-   
-
+      <h1>Blogs</h1>
+        
       <Notification/>
 
       <Routes> 
+        <Route path='*' element={<Navigate replace to ='/blogs' />} />
         <Route path='/blogs' element={user 
-          ? <BlogsSimpleVersion blogs={blogs}/> 
+          ? <BlogsSimpleVersion 
+              blogs={blogs}
+              passedRef={blogFormRef}
+              handleAddBlog={handleAddBlog} 
+            /> 
           : <Navigate replace to ='/login' /> }  
         />
         <Route path='/blogs/:id' element={

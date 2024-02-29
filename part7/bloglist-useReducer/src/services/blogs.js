@@ -56,11 +56,7 @@ const comment = async ({ blogId, object }) => {
   }
   const toJSONit = JSON.stringify(object)
 
-  console.log(object)
-  console.log(toJSONit)
-
   const response = await axios.post(`${baseUrl}/${blogId}/comments`, object, config )
-  console.log(response)
   return response.data
 }
 

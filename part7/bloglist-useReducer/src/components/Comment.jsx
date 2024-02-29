@@ -6,7 +6,7 @@ const Comments = ({ comments }) => {
   return (
     <ul>
       {comments.map(obj => (
-        <li>
+        <li key={obj.id}>
           {obj?.comment}
         </li>
       ))}

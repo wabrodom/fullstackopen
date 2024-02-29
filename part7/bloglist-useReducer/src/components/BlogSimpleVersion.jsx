@@ -1,5 +1,6 @@
 import { useParams } from "react-router-dom"
 import { useCurrentUser } from "../contexts/loginContext"
+import { useNavigate } from "react-router-dom"
 import CommentFrom from "./CommentForm"
 import Comments from "./Comment"
 
@@ -8,6 +9,7 @@ const BlogSimpleVersion = ({ blogs, handleLike, handleDelete, handleAddedComment
   const id = useParams().id
   const blog = blogs.find(b => b.id === id)
   const commentsArray = blog.comments
+  const navigate = useNavigate()
   
   const blogStyle = {
     paddingTop: 10,
@@ -17,9 +19,14 @@ const BlogSimpleVersion = ({ blogs, handleLike, handleDelete, handleAddedComment
     marginBottom: 5
   }
 
+  const removeButtonClick = () => {
+    handleDelete(blog.id, blog)
+    navigate('/blogs')
+  }
+
   const creator = blog.user.id
   const removeButton = () => (
-    <button onClick={() => handleDelete(blog.id, blog)} className='remove-button'>Remove</button>
+    <button onClick={removeButtonClick} className='remove-button'>Remove</button>
   )
 
   return (
@@ -54,6 +61,7 @@ const BlogSimpleVersion = ({ blogs, handleLike, handleDelete, handleAddedComment
 
         </section>
         <section>
+          <h2>Comments</h2>
           <CommentFrom 
             handleAddedComment={handleAddedComment}
             blogId={id}

@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
+import NewBlogTogglable from "./NewBlogTogglable"
 
-const BlogsSimpleVersion = ({ blogs }) => {
+const BlogsSimpleVersion = ({ blogs, handleAddBlog, passedRef}) => {
 
   const blogStyle = {
     display: 'flex',
@@ -14,7 +15,12 @@ const BlogsSimpleVersion = ({ blogs }) => {
 
   return (
     <div>
-      <h1>Blogs</h1>
+      <NewBlogTogglable
+        buttonLabel='new blog'
+        handleAddBlog={handleAddBlog}
+        passedRef={passedRef}
+      />
+
       {blogs.map(blog =>
         <div key={blog.id} style={blogStyle}>
           <Link to={`/blogs/${blog.id}`}>

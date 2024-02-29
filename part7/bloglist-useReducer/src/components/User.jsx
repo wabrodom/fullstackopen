@@ -16,13 +16,13 @@ const User = ( { blogs, passedRef, handleAddBlog }) => {
 
   return (
     <div>
-      <h3>added blogs</h3>
-
+    
       <NewBlogTogglable
         buttonLabel='new blog'
         handleAddBlog={handleAddBlog}
         passedRef={passedRef}
       />
+      <h3>added blogs</h3>
       <ol>
 
         {currentUserBlogs.map(obj => (

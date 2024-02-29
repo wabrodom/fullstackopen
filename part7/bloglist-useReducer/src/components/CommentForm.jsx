@@ -10,7 +10,6 @@ const CommentFrom = ({handleAddedComment, blogId}) => {
   const addComment = (event) => {
     event.preventDefault()
     const obj = {"comment": comment }
-    console.log('here ',obj)
     handleAddedComment(blogId, obj)
     setComment('')  
   }

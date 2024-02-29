@@ -73,6 +73,7 @@ blogsRouter.post('/',  middleware.userExtracter , async (request, response, next
 })
 
 blogsRouter.delete('/:id', middleware.userExtracter, async (request, response, next) => {
+  const blogId = request.params.id
   try {
     const user = request.user
 
@@ -82,9 +83,9 @@ blogsRouter.delete('/:id', middleware.userExtracter, async (request, response, n
       })
     }
     
-    const foundBlog = await Blog.findById(request.params.id)
+    const foundBlog = await Blog.findById(blogId)
     if (foundBlog.user._id.toString() === user._id.toString()) {
-      const deleteBlog = await Blog.findByIdAndRemove(request.params.id)
+      const deleteBlog = await Blog.findByIdAndRemove(blogId)
   
       user.blogs = user.blogs.filter(blogId =>  {
         // console.log('blogs array store blogId as id object',blogId)
@@ -92,6 +93,8 @@ blogsRouter.delete('/:id', middleware.userExtracter, async (request, response, n
       })
       
       await user.save()
+
+      await Comment.deleteMany({ blog: blogId })
   
       response.status(204).end()
     }
