@@ -1,5 +1,8 @@
 import PropTypes from 'prop-types'
 import { useNavigate } from 'react-router-dom'
+import {
+  TextField, Button
+} from '@mui/material'
 
 const LoginForm = (props) => {
   const handleLogin = props.handleLogin
@@ -20,8 +23,8 @@ const LoginForm = (props) => {
   return (
     <form onSubmit={onSubmit}>
       <div>
-        Username
-        <input
+        <TextField
+          label='Username'
           type="text"
           value={username}
           name='Username'
@@ -29,15 +32,22 @@ const LoginForm = (props) => {
         />
       </div>
       <div>
-        Password
-        <input
+        <TextField
+          label='Password'
           type='password'
           value={password}
           name='Password'
           onChange={handleOnChangePassword}
         />
       </div>
-      <button type='submit' id='login-button'>Login</button>
+      <Button 
+        type='submit' 
+        id='login-button' 
+        variant="contained" 
+        olor="primary"
+      >
+        Login
+      </Button>
     </form>
   )
 }

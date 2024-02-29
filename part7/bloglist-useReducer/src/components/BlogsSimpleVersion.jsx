@@ -1,17 +1,25 @@
 import { Link } from "react-router-dom";
 import NewBlogTogglable from "./NewBlogTogglable"
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableRow,
+  Paper,
+} from '@mui/material'
 
 const BlogsSimpleVersion = ({ blogs, handleAddBlog, passedRef}) => {
 
-  const blogStyle = {
-    display: 'flex',
-    justifyContent: 'space-between',
-    paddingTop: 10,
-    paddingLeft: 2,
-    border: 'solid',
-    borderWidth: 1,
-    marginBottom: 5,
-  }
+  // const blogStyle = {
+  //   display: 'flex',
+  //   justifyContent: 'space-between',
+  //   paddingTop: 10,
+  //   paddingLeft: 2,
+  //   border: 'solid',
+  //   borderWidth: 1,
+  //   marginBottom: 5,
+  // }
 
   return (
     <div>
@@ -20,15 +28,28 @@ const BlogsSimpleVersion = ({ blogs, handleAddBlog, passedRef}) => {
         handleAddBlog={handleAddBlog}
         passedRef={passedRef}
       />
+      <TableContainer component={Paper}>
+        <Table>
+          <TableBody>
+           {blogs.map(blog =>
+            <TableRow key={blog.id} >
+              <TableCell>
+                <Link to={`/blogs/${blog.id}`}>
+                  {blog.title}
+                </Link>
+              </TableCell>
 
-      {blogs.map(blog =>
-        <div key={blog.id} style={blogStyle}>
-          <Link to={`/blogs/${blog.id}`}>
-           {blog.title}
-          </Link>
-           <span> likes: {blog.likes}</span>
-        </div> 
+              <TableCell>
+              <span> likes: {blog.likes}</span>
+              </TableCell>
+            </TableRow> 
       )}
+          </TableBody>
+
+        </Table>
+
+      </TableContainer>
+   
     </div>
   )
 }

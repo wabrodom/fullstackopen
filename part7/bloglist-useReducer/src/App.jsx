@@ -22,6 +22,7 @@ import MainLoggedIn from './components/MainLoggedIn'
 import BlogsSimpleVersion from './components/BlogsSimpleVersion'
 import BlogSimpleVersion from './components/BlogSimpleVersion'
 
+import { Container } from '@mui/material'
 
 const App = () => {
   const queryClient = useQueryClient()
@@ -184,7 +185,7 @@ const App = () => {
   const padding ={ padding : 5 }
   const navBar = { backgroundColor: 'lightgrey'}
   return (
-    <div>
+    <Container>
       
       <div style={navBar} >
         <Link style={padding} to='/'>blogs</Link>
@@ -257,7 +258,7 @@ const App = () => {
 
       </Routes>
 
-    </div>
+    </Container>
   )
 }
 
