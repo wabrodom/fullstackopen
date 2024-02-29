@@ -1,5 +1,6 @@
 const blogsRouter = require('express').Router()
 const Blog = require('../models/blog')
+const Comment = require('../models/comment')
 // const jwt = require('jsonwebtoken')
 const middleware = require('../utils/middleware')
 
@@ -13,11 +14,13 @@ blogsRouter.get('/', async (request, response, next) => {
         .find({})
         .sort({likes: sortNumber})
         .populate('user', {username: 1, name:1})
+        .populate('comments')
       return response.json(blogs)
     } 
     const blogs = await Blog
       .find({})
       .populate('user', {username: 1, name:1})
+      .populate('comments')
     response.json(blogs)
     
   } catch (exception) {
@@ -134,5 +137,37 @@ blogsRouter.put('/:id', middleware.userExtracter, async (request, response, next
   }
 })
 
+blogsRouter.post('/:id/comments',  middleware.userExtracter, async (request, response, next) => {
+  const { comment } = request.body
+  const blogId = request.params.id
+
+  try {
+    const user = request.user
+
+    if (user === null) {
+      return response.status(400).json({
+        error: 'the user id is not found.'
+      })
+    }
+    const newComment = new Comment( {
+      comment: comment,
+      user: user._id,
+      blog: blogId
+    })
+    newComment.save()
+
+    const foundBlog = await Blog.findById(blogId)
+    foundBlog.comments = foundBlog.comments.concat(newComment._id)
+    const savedBlog = await foundBlog.save()
+
+    const populatedBlog = await savedBlog.populate('comments')
+    response.statusCode = 201
+    response.json(populatedBlog)
+
+  } catch(exception) {
+    next(exception)
+  }
+
+})
 
 module.exports = blogsRouter

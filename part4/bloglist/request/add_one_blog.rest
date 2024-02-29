@@ -1,6 +1,6 @@
 POST http://localhost:3001/api/blogs/
 Content-Type: application/json
-Authorization: beaRer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6Im1vbW8iLCJpZCI6IjY1YTI1NThjYjYyOTY0NDBhMWQ2MzYzNCIsImlhdCI6MTcwNTE0MTYyM30.Gj6A0148klpNRAbT3_caW1GminSru_SF3QVvB2yABZA
+Authorization: beaRer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImJvbSIsImlkIjoiNjVkZDYwZjg4NDczYzMxNWFmMjI2NTE5IiwiaWF0IjoxNzA5MTc3NjgyLCJleHAiOjE3MDkxODEyODJ9.mnEMctV6ejTsAg2li1xdQTeL4FQie4buyu6_Wt8juKI
 
 {
   "title": "bearer again",
