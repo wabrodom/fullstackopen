@@ -1,27 +1,26 @@
-import { useState } from 'react'
+import { useField } from '../hooks/index'
 import { useNavigate } from 'react-router-dom'
 
 const BlogForm = ({ handleAddBlog }) => {
-  const [title, setTitle] = useState('')
-  const [author, setAuthor] = useState('')
-  const [url, setUrl] = useState('')
 
-  const handleTitleChange = (event) => setTitle(event.target.value)
-  const handleAuthorChange = (event) => setAuthor(event.target.value)
-  const handleUrlChange = (event) => setUrl(event.target.value)
+  const {reset: resetTitle, ...title} = useField('title', 'text')
+  const {reset: resetAuthor, ...author} = useField('author', 'text')
+  const {reset: resetsUrl, ...url} = useField('url', 'url')
+  const handleReset = () => {
+    resetTitle()
+    resetAuthor()
+    resetsUrl()
+  }
   const navigate = useNavigate()
-
+ 
   const addBlog = (event) => {
     event.preventDefault()
     handleAddBlog({
-      title: title,
-      author: author,
-      url: url,
+      title: title.value,
+      author: author.value,
+      url: url.value,
     })
-
-    setTitle('')
-    setAuthor('')
-    setUrl('')
+    handleReset()
     navigate('/blogs')
   }
 
@@ -29,35 +28,17 @@ const BlogForm = ({ handleAddBlog }) => {
     <form onSubmit={addBlog}>
       <div>
         <label htmlFor='title'>title: </label>
-        <input
-          type='text'
-          name='title'
-          id='title'
-          value={title}
-          onChange={handleTitleChange}
-        />
+        <input {...title}/>
       </div>
 
       <div>
         <label htmlFor='author'>author: </label>
-        <input
-          type='text'
-          name='author'
-          id='author'
-          value={author}
-          onChange={handleAuthorChange}
-        />
+        <input {...author} />
       </div>
 
       <div>
         <label htmlFor='url'>url: </label>
-        <input
-          type='url'
-          name='url'
-          id='url'
-          value={url}
-          onChange={handleUrlChange}
-        />
+        <input {...url} />
       </div>
 
 

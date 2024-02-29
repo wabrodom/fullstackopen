@@ -1,6 +1,15 @@
 import { useEffect, useState } from "react"
 import userService from '../services/users'
-import { Link } from "react-router-dom";
+import { Link } from "react-router-dom"
+import {
+  Table,
+  TableHead,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableRow,
+  Paper,
+} from '@mui/material'
 
 const Users = () => {
   const [users, setUsers] = useState(null)
@@ -16,28 +25,33 @@ const Users = () => {
   return (
     <div>
        <h2>Users</h2>
-      <table>
-        <thead>
-          <tr>
-            <th>user</th>
-            <th>blogs created</th>
-          </tr>
-        </thead>
-        <tbody>
-            {users.map(u => (
-              <tr key={u.id} >
-                <td>
-                  <Link to={`/users/${u.id}`} >
-                    {u.name}
-                  </Link>
-                </td>
-                <td>{u.blogs.length}</td>
-              </tr>
-            ))}
+      <TableContainer component={Paper}>
+        <Table>
+
+          <TableHead>
+            <TableRow>
+              <TableCell>user</TableCell>
+              <TableCell>blogs created</TableCell>
+            </TableRow>
+          </TableHead>
+
+          <TableBody>
+              {users.map(u => (
+                <TableRow key={u.id} >
+                  <TableCell>
+                    <Link to={`/users/${u.id}`} >
+                      {u.name}
+                    </Link>
+                  </TableCell>
+                  <TableCell>{u.blogs.length}</TableCell>
+                </TableRow>
+              ))}
 
 
-        </tbody>
-      </table>
+          </TableBody>
+                
+        </Table>
+      </TableContainer>
     </div>
   )
 }

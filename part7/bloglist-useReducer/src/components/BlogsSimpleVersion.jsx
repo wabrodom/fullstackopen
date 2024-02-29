@@ -31,19 +31,19 @@ const BlogsSimpleVersion = ({ blogs, handleAddBlog, passedRef}) => {
       <TableContainer component={Paper}>
         <Table>
           <TableBody>
-           {blogs.map(blog =>
-            <TableRow key={blog.id} >
-              <TableCell>
-                <Link to={`/blogs/${blog.id}`}>
-                  {blog.title}
-                </Link>
-              </TableCell>
+            {blogs.map(blog =>
+              <TableRow key={blog.id} >
+                <TableCell>
+                  <Link to={`/blogs/${blog.id}`}>
+                    {blog.title}
+                  </Link>
+                </TableCell>
 
-              <TableCell>
-              <span> likes: {blog.likes}</span>
-              </TableCell>
-            </TableRow> 
-      )}
+                <TableCell>
+                <span> likes: {blog.likes}</span>
+                </TableCell>
+              </TableRow> 
+            )}  
           </TableBody>
 
         </Table>
