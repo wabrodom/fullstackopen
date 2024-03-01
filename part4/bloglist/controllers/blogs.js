@@ -157,7 +157,10 @@ blogsRouter.post('/:id/comments',  middleware.userExtracter, async (request, res
       user: user._id,
       blog: blogId
     })
-    newComment.save()
+
+    const err = await newComment.save().catch(error => {
+       throw error
+    })
 
     const foundBlog = await Blog.findById(blogId)
     foundBlog.comments = foundBlog.comments.concat(newComment._id)
