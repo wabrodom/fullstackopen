@@ -23,6 +23,7 @@ import BlogsSimpleVersion from './components/BlogsSimpleVersion'
 import BlogSimpleVersion from './components/BlogSimpleVersion'
 
 import { Container } from '@mui/material'
+import NavBar from './components/NavBar'
 
 const App = () => {
   const queryClient = useQueryClient()
@@ -182,21 +183,14 @@ const App = () => {
   }
 
 
-  const padding ={ padding : 5 }
-  const navBar = { backgroundColor: 'lightgrey'}
+  
+
   return (
     <Container>
-      
-      <div style={navBar} >
-        <Link style={padding} to='/'>blogs</Link>
-        <Link style={padding} to='/users'>users</Link>
-        {user &&
-           <MainLoggedIn 
-              user={user}
-              handleLogout={handleLogout}
-            />
-        }
-      </div>
+      <NavBar 
+        user={user}
+        handleLogout={handleLogout}
+      />
       <h1>Blogs</h1>
         
       <Notification/>

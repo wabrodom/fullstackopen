@@ -1,6 +1,7 @@
 import { useParams } from "react-router-dom"
 import { useCurrentUser } from "../contexts/loginContext"
 import { useNavigate } from "react-router-dom"
+import { Container, Paper, Box } from "@mui/material"
 import CommentFrom from "./CommentForm"
 import Comments from "./Comment"
 
@@ -29,9 +30,19 @@ const BlogSimpleVersion = ({ blogs, handleLike, handleDelete, handleAddedComment
     <button onClick={removeButtonClick} className='remove-button'>Remove</button>
   )
 
+  const space  = {
+    mx: '1rem' , 
+    p: '0.5rem',
+  }
+
   return (
-    <div className='blog'>
-      <section  style={blogStyle}>
+    <Container component={Paper} sx={{p: '0.1rem'}} >
+      <Box 
+        sx={space}
+        borderBottom= '0.25rem solid lightgrey'
+        borderRadius= '0.5rem'
+      >
+        <section>
 
       
         <h2>
@@ -60,6 +71,8 @@ const BlogSimpleVersion = ({ blogs, handleLike, handleDelete, handleAddedComment
         </div>
 
         </section>
+      </Box>
+      <Box sx={space}>
         <section>
           <h2>Comments</h2>
           <CommentFrom 
@@ -68,7 +81,8 @@ const BlogSimpleVersion = ({ blogs, handleLike, handleDelete, handleAddedComment
           />
           <Comments comments={commentsArray} />
         </section>
-    </div>
+      </Box>
+    </Container>
   )
 }
 

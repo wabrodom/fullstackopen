@@ -1,14 +1,18 @@
 import { Link } from 'react-router-dom'
+import { Button } from '@mui/material'
+
 const MainLoggedIn = ({ user, handleLogout }) => {
 
   return (
     <span>
-      <em>
-        <Link to={`users/${user.id}`}>
-          {user.name} 
-        </Link> logged in 
-      </em>
-      <button onClick={handleLogout}> Log out</button>
+      
+      <Button component={Link} to={`users/${user.id}`} color='inherit'>
+          <em>{user.name} logged in</em>
+      </Button> 
+      
+      <Button onClick={handleLogout} color='secondary'>
+         Log out
+      </Button>
     </span>
   )
 }
