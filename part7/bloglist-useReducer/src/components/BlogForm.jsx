@@ -1,5 +1,6 @@
 import { useField } from '../hooks/index'
 import { useNavigate } from 'react-router-dom'
+import { TextField, Button, Box } from '@mui/material'
 
 const BlogForm = ({ handleAddBlog }) => {
 
@@ -23,27 +24,34 @@ const BlogForm = ({ handleAddBlog }) => {
     handleReset()
     navigate('/blogs')
   }
+  const buttonWidth = {
+    width: '100px',
+  }
 
   return (
     <form onSubmit={addBlog}>
-      <div>
-        <label htmlFor='title'>title: </label>
-        <input {...title}/>
-      </div>
+        <Box 
+          display="flex"
+          flexDirection='column'
+          // alignItems="center"
+          sx={{mb: 2}} 
+        > 
+          <TextField {...title} variant="standard"/>
+          <TextField {...author} variant="standard"/>
+          <TextField {...url} variant="standard"/>
 
-      <div>
-        <label htmlFor='author'>author: </label>
-        <input {...author} />
-      </div>
+          <Button 
+            style={buttonWidth}
+            type='submit' 
+            id='create-blog' 
+            variant='contained' 
+            color='primary' 
+            sx={{m : 1}}
+          >
+            create
+          </Button>
 
-      <div>
-        <label htmlFor='url'>url: </label>
-        <input {...url} />
-      </div>
-
-
-      <button type='submit' id='create-blog'>create</button>
-
+        </Box>
     </form>
 
   )
