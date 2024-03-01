@@ -1,5 +1,16 @@
 import { useParams, Link } from "react-router-dom"
 import NewBlogTogglable from "./NewBlogTogglable"
+import { 
+  Container, 
+  TableContainer,
+  Table,
+  TableBody,
+  TableRow,
+  TableCell,
+  Paper,
+} from "@mui/material"
+
+
 
 
 const User = ( { blogs, passedRef, handleAddBlog }) => {
@@ -14,6 +25,7 @@ const User = ( { blogs, passedRef, handleAddBlog }) => {
     marginBottom: 5
   }
 
+
   return (
     <div>
     
@@ -22,20 +34,31 @@ const User = ( { blogs, passedRef, handleAddBlog }) => {
         handleAddBlog={handleAddBlog}
         passedRef={passedRef}
       />
-      <h3>added blogs</h3>
-      <ol>
+      <Container component={Paper}>
+      
+        <h3>Added Blogs</h3>
+        <TableContainer>
+          <Table>
+            <TableBody>
+              {currentUserBlogs.map((obj, index) => (
+                <TableRow key={obj.id}>
+                  <TableCell>{index + 1 }</TableCell>
+                  <TableCell>
+                    <Link  to={`/blogs/${obj.id}`}>
+                      {obj.title}
+                    </Link>
+                  </TableCell>
 
-        {currentUserBlogs.map(obj => (
+                </TableRow>
 
-          <li key={obj.id}>
-            <Link  to={`/blogs/${obj.id}`}>
-              {obj.title}
-            </Link>
-          </li>
+              ))}
 
-        ))}
+            </TableBody>
 
-      </ol>
+          </Table>
+
+        </TableContainer>
+      </Container>
     </div>
   )
 
