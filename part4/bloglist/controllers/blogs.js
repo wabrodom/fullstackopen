@@ -158,7 +158,7 @@ blogsRouter.post('/:id/comments',  middleware.userExtracter, async (request, res
       blog: blogId
     })
 
-    const err = await newComment.save().catch(error => {
+    await newComment.save().catch(error => {
        throw error
     })
 
