@@ -100,28 +100,50 @@ let books = [
 const typeDefs = `
   type Book {
     title: String!
+    author: String!
     published: Int!
-    id: ID!
     genres: [String!]!
+    id: ID!
   }
+
+  type AllAuthors {
+    name: String!
+    bookCount: Int!
+  }
+
   type Query {
     bookCount: Int!
     authorCount: Int!
+    allBooks: [Book!]!
+    allAuthors: [AllAuthors!]!
   }
+
 `
+const authorsMap = (books) => {
+  const map = new Map()
+  for (let book of books) {
+    const currentCount = map.get(book.author) || 0
+    map.set(book.author, currentCount +1)
+  }
+  return map
+}
 
 const resolvers = {
   Query: {
-    bookCount: () =>{
-      return books.length
-    },
+    bookCount: () => books.length,
     authorCount: () => {
-      const map = new Map()
-      for (let book of books) {
-        const currentCount = map.get(book.author) || 0
-        map.set(book.author, currentCount +1)
-      }
+      const map = authorsMap(books)
       return map.size
+    },
+    allBooks: () => books,
+    allAuthors: () => {
+      const map = authorsMap(books)
+      const result = [] 
+      for (let pair of map.entries()) {
+        const currentObj = { name: pair[0], bookCount: pair[1] }
+        result.push(currentObj)
+      }
+      return result
     }
   }
 }
