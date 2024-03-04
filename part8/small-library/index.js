@@ -127,6 +127,10 @@ const typeDefs = `
       published: Int!
       genres: [String!]!
     ): Book!
+    editAuthor(
+      name: String!
+      setBornTo: Int!
+    ): AllAuthors
   }
 
 `
@@ -163,14 +167,28 @@ const resolvers = {
         && b.genres.includes(args.genre) )
       return authorAndGenreBooks
     },
+    /* allAuthors: query method but have side effect to server, 
+      the goal here is for authors, array of object, must have some way to remember new author
+      so fetch authors info just from books is not enough, as the new author will not be added when book added
+      for now to make it passed ex. I mutate server, not read only
+    */
     allAuthors: () => {
       const map = authorsMap(books)
-      const result = [] 
+   
       for (let pair of map.entries()) {
-        const currentObj = { name: pair[0], bookCount: pair[1] }
-        result.push(currentObj)
+        const currentAuthor = { name: pair[0], bookCount: pair[1] }
+
+        const foundInAuthors = authors.find(obj => obj.name === currentAuthor.name)
+        if (!foundInAuthors) {
+          authors = authors.concat(currentAuthor)
+        }
+        authors = authors.map(obj => obj.name === currentAuthor.name
+          ? {...obj, bookCount: currentAuthor.bookCount}
+          : obj
+          )
       }
-      return result
+
+      return authors
     }
   },
   Mutation: {
@@ -181,10 +199,22 @@ const resolvers = {
       const author = book.author
       const alreadyInAuthors = authors.find(obj => obj.name === author)
       if(!alreadyInAuthors) {
-        authors.concat(author)
+        const newAuthorObject ={ name: author, bookCount: 1 , id: uuid() }
+        authors = authors.concat(newAuthorObject)
       }
 
       return book
+    },
+    editAuthor: (root, args) => {
+      const author = authors.find(obj => obj.name === args.name)
+
+      if (!author) {
+        return null
+      }
+
+      const updateAuthor = {...author, born: args.setBornTo}
+      authors = authors.map(p => p.name === author.name ? updateAuthor: p)
+      return updateAuthor
     }
   }
 }
