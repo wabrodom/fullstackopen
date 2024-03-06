@@ -164,13 +164,12 @@ const authorsMap = (books) => {
 
 const resolvers = {
   Query: {
-    bookCount: async () => Book.collection.countDocuments(),
-
-    authorCount: async() => Author.collection.countDocuments(),
-
+    bookCount: () => books.length,
+    authorCount: () => {
+      const map = authorsMap(books)
+      return map.size
+    },
     allBooks: (root, args) => {
-      return Book.find({})
-      
       if (!args.author && !args.genre) {
         return books
       }
@@ -193,7 +192,6 @@ const resolvers = {
       for now to make it passed ex. I mutate server, not read only
     */
     allAuthors: () => {
-      return Author.find({})
       const map = authorsMap(books)
    
       for (let pair of map.entries()) {
