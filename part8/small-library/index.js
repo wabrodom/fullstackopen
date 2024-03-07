@@ -158,10 +158,10 @@ const typeDefs = `
 const resolvers = {
 
   Book: {
-    author: ({ name, born }) => {
+    author: (root) => {
       return {
-        name,
-        born
+        name: root.author.name,
+        born: root.author.born
       }
     }
   },
@@ -174,13 +174,14 @@ const resolvers = {
 
     allBooks: async (root, args) => {
       if (!args.author) {
-        return Book.find({})
+        const allBooksPopulated = await Book.find({}).populate('author')
+        return allBooksPopulated
       }
 
       const authorId = await Author.findOne({ name : args.author })._id
-      const authorBooks = await Book.find({ author : authorId })
+      console.log(authorId)
+      const authorBooks = await Book.find({ author : authorId }).populate('author')
       return authorBooks
-      
     },
 
     allAuthors: async () => {
@@ -204,8 +205,7 @@ const resolvers = {
       const book = new Book({ ...args, author: theAuthor._id })
       const returnedBook = await book.save()
       const populated = await returnedBook.populate('author')
-      // const schemaRequired = { ...populated, author: populated.author.name}
-      // console.log(schemaRequired)  
+
       console.log(populated, "vs")
       console.log(populated.author.name)
       return populated
