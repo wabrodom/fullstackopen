@@ -153,88 +153,74 @@ const typeDefs = `
   }
 
 `
-const authorsMap = (books) => {
-  const map = new Map()
-  for (let book of books) {
-    const currentCount = map.get(book.author) || 0
-    map.set(book.author, currentCount +1)
-  }
-  return map
-}
+
 
 const resolvers = {
+
+  Book: {
+    author: ({ name, born }) => {
+      return {
+        name,
+        born
+      }
+    }
+  },
+
   Query: {
+
     bookCount: async () => Book.collection.countDocuments(),
 
     authorCount: async() => Author.collection.countDocuments(),
 
-    allBooks: (root, args) => {
-      return Book.find({})
+    allBooks: async (root, args) => {
+      if (!args.author) {
+        return Book.find({})
+      }
+
+      const authorId = await Author.findOne({ name : args.author })._id
+      const authorBooks = await Book.find({ author : authorId })
+      return authorBooks
       
-      if (!args.author && !args.genre) {
-        return books
-      }
-      if (!args.author && args.genre) {
-        const genreBooks = books.filter(b => b.genres.includes(args.genre))
-        return genreBooks
-      }
-      if (args.author && !args.genre) {
-        const authorBooks = books.filter(b => b.author === args.author)
-        return authorBooks
-      }
-
-      const authorAndGenreBooks = books.filter(b => b.author === args.author 
-        && b.genres.includes(args.genre) )
-      return authorAndGenreBooks
     },
-    /* allAuthors: query method but have side effect to server, 
-      the goal here is for authors, array of object, must have some way to remember new author
-      so fetch authors info just from books is not enough, as the new author will not be added when book added
-      for now to make it passed ex. I mutate server, not read only
-    */
-    allAuthors: () => {
+
+    allAuthors: async () => {
       return Author.find({})
-      const map = authorsMap(books)
-   
-      for (let pair of map.entries()) {
-        const currentAuthor = { name: pair[0], bookCount: pair[1] }
-
-        const foundInAuthors = authors.find(obj => obj.name === currentAuthor.name)
-        if (!foundInAuthors) {
-          authors = authors.concat(currentAuthor)
-        }
-        authors = authors.map(obj => obj.name === currentAuthor.name
-          ? {...obj, bookCount: currentAuthor.bookCount}
-          : obj
-          )
-      }
-
-      return authors
     }
   },
   Mutation: {
-    addBook: (root, args) => {
-      const book = { ...args, id: uuid() }
-      books = books.concat(book)
+    addBook: async (root, args) => {
+      const theAuthor = await Author.findOne({ name: args.author })
 
-      const author = book.author
-      const alreadyInAuthors = authors.find(obj => obj.name === author)
-      if(!alreadyInAuthors) {
-        const newAuthorObject ={ name: author, bookCount: 1 , id: uuid() }
-        authors = authors.concat(newAuthorObject)
+      if ( !theAuthor ) {
+        const newAuthor = new Author({ name: args.author })
+        await newAuthor.save()
+
+        const book = new Book({ ...args, author: newAuthor._id })
+        const retunedBook = await book.save()
+        const populated = await retunedBook.populate('author')
+        return populated
       }
 
-      return book
+      const book = new Book({ ...args, author: theAuthor._id })
+      const returnedBook = await book.save()
+      const populated = await returnedBook.populate('author')
+      // const schemaRequired = { ...populated, author: populated.author.name}
+      // console.log(schemaRequired)  
+      console.log(populated, "vs")
+      console.log(populated.author.name)
+      return populated
     },
-    editAuthor: (root, args) => {
-      const author = authors.find(obj => obj.name === args.name)
 
-      if (!author) {
+
+    editAuthor: async (root, args) => {
+      const authorToEdit = await Author.findOne( { name: args.author })
+
+      if (!authorToEdit) {
         return null
       }
+      authorToEdit.born = args.setBornTo
+      await authorToEdit.save()
 
-      const updateAuthor = {...author, born: args.setBornTo}
-      authors = authors.map(p => p.name === author.name ? updateAuthor: p)
       return updateAuthor
     }
   }
