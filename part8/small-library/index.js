@@ -1,6 +1,7 @@
 const { ApolloServer } = require('@apollo/server')
 const { startStandaloneServer } = require('@apollo/server/standalone')
 const { v1: uuid } = require('uuid')
+const { GraphQLError } = require('graphql')
 
 const config = require('./utils/config')
 const mongoose = require('mongoose')
@@ -200,22 +201,66 @@ const resolvers = {
   },
   Mutation: {
     addBook: async (root, args) => {
+      const duplicateName = await Book.findOne({ title: args.title })
+
+      if (duplicateName) {
+        throw new GraphQLError('name must be unqiue', {
+          extensions: {
+            code: 'BAD_USER_INPUT',
+            inValidArgs: args.title
+          }
+        })
+      }
+
       const foundAuthor = await Author.findOne({ name: args.author })
 
       if ( !foundAuthor ) {
         const newAuthor = new Author({ name: args.author })
-        await newAuthor.save()
+        try {
+          await newAuthor.save()
+        } catch (error) {
+          throw new GraphQLError('new author name saved failed', {
+            extensions: {
+              code: 'BAD_USER_INPUT',
+              inValidArgs: args.author,
+              error
+            }
+          })
+        }
 
         const book = new Book({ ...args, author: newAuthor._id })
-        const retunedBook = await book.save()
-        const populated = await retunedBook.populate('author')
 
+        try {
+          await book.save()
+        } catch (error) {
+          throw new GraphQLError('save book failed', {
+            extensions: {
+              code: 'BAD_USER_INPUT',
+              inValidArgs: args,
+              error
+            }
+          })
+        }
+
+        const populated = await book.populate('author')
         return populated
+
       }
 
       const book = new Book({ ...args, author: foundAuthor._id })
-      const returnedBook = await book.save()
-      const populated = await returnedBook.populate('author')
+
+      try {
+        await book.save()
+      } catch (error) {
+        throw new GraphQLError('save book falied', {
+          extensions: {
+            code: 'BAD_USER_INPUT',
+            inValidArgs: args,
+            error
+          }
+        })
+      }
+      const populated = await book.populate('author')
 
       return populated
     },
@@ -228,7 +273,16 @@ const resolvers = {
         return null
       }
       authorToEdit.born = args.setBornTo
-      await authorToEdit.save()
+      try {
+        await authorToEdit.save()
+      } catch(error) {
+        throw new GraphQLError('failed to change birthyear of the author', {
+          extensions: {
+            code: 'BAD_USER_INPUT',
+            inValidArgs: args.setBornTo
+          }
+        })
+      }
 
       return authorToEdit
     }
