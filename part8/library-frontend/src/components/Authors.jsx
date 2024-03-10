@@ -3,13 +3,20 @@ import { ALL_AUTHORS } from '../queries'
 
 import EditAuthorBirth from './EditAuthorBirth'
 
-const Authors = ({ setError }) => {
+const Authors = ({ setError, authorAndBookCount }) => {
   const result = useQuery(ALL_AUTHORS)
+
 
   if (result.loading) {
     return <div>loading...</div>
   }
   const authors = result.data.allAuthors
+
+  const authorBookCount = (array, name) => {
+    const foundAuthor = array.find(obj => obj.name === name)
+
+    return foundAuthor.bookCount
+  } 
 
   return (
     <div>
@@ -26,7 +33,7 @@ const Authors = ({ setError }) => {
             <tr key={a.name}>
               <td>{a.name}</td>
               <td>{a.born}</td>
-              <td>{a.bookCount}</td>
+              <td>{authorBookCount(authorAndBookCount, a.name)}</td>
             </tr>
           ))}
         </tbody>
