@@ -1,7 +1,8 @@
 import { useQuery } from '@apollo/client'
 import { ALL_BOOKS } from '../queries'
+import GenreDisplay from './GenreDisplay'
 
-const Books = (props) => {
+const Books = () => {
   const result = useQuery(ALL_BOOKS)
   if (result.loading) {
     return <div>loading...</div>
@@ -12,7 +13,7 @@ const Books = (props) => {
   return (
     <div>
       <h2>books</h2>
-
+      <GenreDisplay books={books} />
       <table>
         <tbody>
           <tr>
