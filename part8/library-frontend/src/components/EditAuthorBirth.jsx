@@ -21,6 +21,7 @@ const EditAuthorBirth = ({ authors, setError }) => {
     // const currentSelect = event.target.selectAuthor.value
 
     editAuthor({variables: { name: selectedOption.value, setBornTo: +year} })
+    setYear('')
   } 
 
   const options = authors.map(obj => {

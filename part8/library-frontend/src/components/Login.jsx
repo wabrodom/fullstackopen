@@ -1,12 +1,10 @@
 import { useEffect, useState } from "react"
 import { useMutation } from "@apollo/client"
 import { LOGIN } from "../queries"
-import { useNavigate } from "react-router-dom";
 
 const Login = ( { setToken, setError }) => {
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
-  const navigate = useNavigate()
 
   const [login, result] = useMutation(LOGIN, {
     onError: (error) => {

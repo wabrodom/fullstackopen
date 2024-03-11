@@ -1,7 +1,7 @@
 import { 
   BrowserRouter as Router,
   Routes, Route, Link,
-  useNavigate,
+  Navigate
 } from 'react-router-dom'
 import { useState } from 'react'
 import Login from './components/Login'
@@ -31,7 +31,6 @@ const App = () => {
     setToken(null)
     localStorage.removeItem('library-user-token')
     client.resetStore()
-
   }
 
   if (result.loading) {
@@ -63,7 +62,7 @@ const App = () => {
   const authorAndBookCount = getAuthorAndBookCount()
 
   return (
-    <Router>
+    // <Router>
       <div>
         <div>
           <Link to='/'>
@@ -100,13 +99,15 @@ const App = () => {
         <Routes>
           <Route path='/' element={<Authors setError={notify} authorAndBookCount={authorAndBookCount}/>} />
           <Route path='/books' element={<Books/>} />
-          <Route path='/add' element={token && <NewBook/>} />
-          <Route path='/login' element={<Login setToken={setToken} setError={notify} />} />
+          <Route path='/add' element={token ? <NewBook/> : <Navigate replace to ='/login'/>} />
+          <Route path='/login' element={token ? <Navigate replace to ='/add'/> : <Login setToken={setToken} setError={notify} /> } />
+
+
         </Routes>
         <Notification message={errorMessage}/>
       </div>
 
-    </Router>
+    // </Router>
   )
 }
 
