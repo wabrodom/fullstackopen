@@ -1,8 +1,19 @@
-const GenreDisplay = ( {genres, setGenre} ) => {
 
-  const selectGenre = (event) => {
-    setGenre( event.target.value )
-  } 
+const GenreDisplay = ( {books , setGenre} ) => {
+
+
+  const allGenres = (books) => {
+    const set = new Set()
+    for (let book of books) {
+      const currentGenres = book.genres
+      set.add(...currentGenres)
+    }
+    return [...set]
+  }
+
+  const genres = allGenres(books)
+
+  const selectGenre = (event) =>  setGenre( event.target.value )
   const clearGenre = () => setGenre(null)
 
   const colorSalmon = { backgroundColor: 'salmon'}

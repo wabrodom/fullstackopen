@@ -6,19 +6,39 @@ import GenreDisplay from './GenreDisplay'
 
 const Books = () => {
   const [genre, setGenre] = useState(null)
+  const [allGenres, setAllGenres] = useState(null)
+
   const result = useQuery(ALL_BOOKS)
-  if (result.loading) {
+  const resultFilter = useQuery(ALL_BOOKS, {
+    variables: { genre }, 
+    skip: !genre
+  })
+
+  if (result.loading || resultFilter.loading) {
     return <div>loading...</div>
   }
 
-  const allBooks = result.data.allBooks
+  console.log(resultFilter.data)
+  const allBooksFiltered = resultFilter.data.allBooks
 
-  const filterBooks = genre ? allBooks.filter(b => b.genres.includes(genre)) : allBooks
+
+  const allGenresHelper = (books) => {
+    const set = new Set()
+    for (let book of books) {
+      const currentGenres = book.genres
+      set.add(...currentGenres)
+    }
+    return [...set]
+  }
+
+  if (!genre) {
+    setAllGenres(allGenresHelper(allBooksFiltered))
+  }
 
   return (
     <div>
       <h2>books</h2>
-      <GenreDisplay books={allBooks} setGenre={setGenre} />
+      <GenreDisplay genres={allGenres} setGenre={setGenre} />
       <table>
         <tbody>
           <tr>
@@ -26,7 +46,7 @@ const Books = () => {
             <th>author</th>
             <th>published</th>
           </tr>
-          {filterBooks.map((a) => (
+          {allBooksFiltered.map((a) => (
             <tr key={a.title}>
               <td>{a.title}</td>
               <td>{a.author.name}</td>
