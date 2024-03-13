@@ -28,6 +28,8 @@ export const ALL_BOOKS = gql`
         born
       }
       genres
+      published
+      id
     }
   }
 `
@@ -69,6 +71,16 @@ export const EDIT_AUTHOR = gql`
     editAuthor(name: $name, setBornTo: $setBornTo) {
       name
       born
+    }
+  }
+`
+
+export const CURRENT_USER = gql`
+  query {
+    me {
+      username
+      id
+      favoriteGenre
     }
   }
 `
