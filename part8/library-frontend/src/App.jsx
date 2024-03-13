@@ -1,9 +1,8 @@
 import { 
-  BrowserRouter as Router,
   Routes, Route, Link,
   Navigate
 } from 'react-router-dom'
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import Login from './components/Login'
 import Authors from './components/Authors'
 import Books from './components/Books'
@@ -11,22 +10,16 @@ import NewBook from './components/NewBook'
 import Notification from './components/Notification'
 
 import { useQuery, useApolloClient } from '@apollo/client'
-import { ALL_BOOKS,CURRENT_USER } from './queries';
+import { ALL_BOOKS } from './queries';
 import Recommended from './components/Recommended';
 
 const App = () => {
   const [errorMessage , setErrorMessage] = useState(null)
   const [token, setToken] = useState(null)
-  const [currentUser, setCurrentUser] = useState(null)
+
   const client = useApolloClient()
 
   const result = useQuery(ALL_BOOKS)
-  const resultCurrentUser = useQuery(CURRENT_USER)
-
-  useEffect(()=> {
-    if(resultCurrentUser.data)
-      setCurrentUser(resultCurrentUser.data.me)
-  }, [resultCurrentUser.data])
 
   const notify  = message => {
     setErrorMessage(message)
@@ -41,7 +34,7 @@ const App = () => {
     client.resetStore()
   }
 
-  if (result.loading || resultCurrentUser.loading || !resultCurrentUser.data) {
+  if (result.loading) {
     return <div>loading...</div>
   }
 
@@ -69,7 +62,6 @@ const App = () => {
   const authorAndBookCount = getAuthorAndBookCount()
 
   return (
-    // <Router>
       <div>
         <div>
           <Link to='/'>
@@ -109,18 +101,31 @@ const App = () => {
 
         
         <Routes>
-          <Route path='/' element={<Authors setError={notify} authorAndBookCount={authorAndBookCount}/>} />
-          <Route path='/books' element={<Books/>} />
-          <Route path='/add' element={token ? <NewBook/> : <Navigate replace to ='/login'/>} />
-          <Route path='/recommended' element={token ? <Recommended currentUser={currentUser}/> : <Navigate replace to ='/login'/>} />
-          <Route path='/login' element={token ? <Navigate replace to ='/add'/> : <Login setToken={setToken} setError={notify} /> } />
+          <Route path='/' 
+            element={<Authors setError={notify} authorAndBookCount={authorAndBookCount}/>} 
+          />
+
+          <Route path='/books' 
+            element={<Books/>}
+          />
+
+          <Route path='/add' 
+            element={token ? <NewBook/>     : <Navigate replace to ='/login'/>} 
+          />
+
+          <Route path='/recommended' 
+            element={token ? <Recommended/> : <Navigate replace to ='/login'/>} 
+          />
+
+          <Route path='/login' 
+            element={token ? <Navigate replace to ='/add'/> : <Login setToken={setToken} setError={notify} /> } 
+          />
 
 
         </Routes>
         <Notification message={errorMessage}/>
       </div>
 
-    // </Router>
   )
 }
 

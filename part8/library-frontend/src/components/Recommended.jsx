@@ -1,16 +1,26 @@
-import { useQuery } from "@apollo/client"
-import { ALL_BOOKS } from "../queries"
+import { useState } from "react"
+import { useQuery, useLazyQuery } from "@apollo/client"
+import { ALL_BOOKS, CURRENT_USER } from "../queries"
 
-const Recommended = ({ currentUser }) => {
-
-  const resultFilterBooks = useQuery(ALL_BOOKS, {
-    variables: { genre: currentUser.favoriteGenre }
+const Recommended = () => {
+  const [currentUser, setCurrentUser] = useState(null)
+  const [filteredBooks, setFilteredBooks] = useState(null)
+  
+  useQuery(CURRENT_USER, {
+    onCompleted: (data) => {
+      setCurrentUser(data.me)
+      getFilterBooks({ variables: { genre: data.me.favoriteGenre }})
+    }
   })
 
-  console.log(currentUser.favoriteGenre)
-  if (resultFilterBooks.loading) return null
+  const [getFilterBooks, resultFilterBooks] = useLazyQuery(ALL_BOOKS, {
+    onCompleted: (data) => setFilteredBooks(data.allBooks)
+  })
 
-  const filteredBooks = resultFilterBooks.data.allBooks
+
+  if (resultFilterBooks.loading || !currentUser || !filteredBooks) {
+    return null
+  } 
 
   return (
     <div>
