@@ -2,7 +2,7 @@ import { ALL_BOOKS } from "../queries"
 import { useQuery } from "@apollo/client"
 
 
-const GenreDisplay = ( { setGenre } ) => {
+const GenreDisplay = ( { setGenre, refetch } ) => {
   const result = useQuery(ALL_BOOKS)
 
   if (result.loading) {
@@ -15,14 +15,21 @@ const GenreDisplay = ( { setGenre } ) => {
     const set = new Set()
     for (let book of books) {
       const currentGenres = book.genres
-      set.add(...currentGenres)
+      if (Array.isArray(currentGenres)){
+        currentGenres.forEach(elem => set.add(elem))
+      } else {
+        set.add(...currentGenres)
+      }
     }
     return [...set]
   }
 
   const genres = allGenresHelper(allBooks)
 
-  const selectGenre = (event) => setGenre(event.target.value)
+  const selectGenre = (event) => { 
+    setGenre(event.target.value)
+    result.refetch()
+  }
   const clearGenre = () => setGenre(null)
 
   const colorSalmon = { backgroundColor: 'salmon'}

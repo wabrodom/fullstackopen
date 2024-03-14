@@ -17,11 +17,12 @@ const Books = () => {
 
   const allBooksFiltered = resultFilter.data.allBooks
 
+  const triggerRefetch = () =>  resultFilter.refetch()
 
   return (
     <div>
       <h2>books</h2>
-      <GenreDisplay setGenre={setGenre} />
+      <GenreDisplay setGenre={setGenre} refetch={triggerRefetch} />
       <table>
         <tbody>
           <tr>

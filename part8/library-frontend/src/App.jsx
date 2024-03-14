@@ -110,7 +110,7 @@ const App = () => {
           />
 
           <Route path='/add' 
-            element={token ? <NewBook/>     : <Navigate replace to ='/login'/>} 
+            element={token ? <NewBook setError={notify}/> : <Navigate replace to ='/login'/>} 
           />
 
           <Route path='/recommended' 

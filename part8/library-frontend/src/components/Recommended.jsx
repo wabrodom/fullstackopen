@@ -22,6 +22,8 @@ const Recommended = () => {
     return null
   } 
 
+  resultFilterBooks.refetch()
+
   return (
     <div>
       <h2>Recommendations</h2>
