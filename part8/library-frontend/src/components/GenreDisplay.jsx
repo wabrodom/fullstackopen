@@ -30,8 +30,10 @@ const GenreDisplay = ( { setGenre, refetch } ) => {
     setGenre(event.target.value)
     result.refetch()
   }
-  const clearGenre = () => setGenre(null)
-
+  const clearGenre = () => {
+    setGenre(null)
+    refetch()
+  }
   const colorSalmon = { backgroundColor: 'salmon'}
 
   return (
