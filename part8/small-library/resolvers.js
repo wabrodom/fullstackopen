@@ -3,6 +3,10 @@ const jwt =require('jsonwebtoken')
 const Author = require('./models/Author')
 const Book = require('./models/Book')
 const User = require('./models/User')
+const config = require('./utils/config')
+
+const { PubSub } = require('graphql-subscriptions')
+const pubsub = new PubSub()
 
 const resolvers = {
 
@@ -103,6 +107,9 @@ const resolvers = {
         }
 
         const populated = await book.populate('author')
+
+        pubsub.publish('BOOK_ADDED', { bookAdded: populated })
+
         return populated
 
       }
@@ -197,6 +204,14 @@ const resolvers = {
 
       const userForToken = { username: user.username, id: user._id}
       return { value: jwt.sign(userForToken, config.JWT_SECRET)}
+    }
+  },
+
+  Subscription: {
+    bookAdded: {
+      subscribe: () => pubsub.asyncIterator('BOOK_ADDED')
+      // return AsyncIterator obj, its name is 'BOOK_ADDED'. the job is to listen to "BOOK_ADDED event label"
+      // or it save info about client that do the  subscriptions
     }
   }
 }
