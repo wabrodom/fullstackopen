@@ -9,8 +9,8 @@ import Books from './components/Books'
 import NewBook from './components/NewBook'
 import Notification from './components/Notification'
 
-import { useQuery, useApolloClient } from '@apollo/client'
-import { ALL_BOOKS } from './queries';
+import { useQuery, useApolloClient, useSubscription } from '@apollo/client'
+import { ALL_BOOKS, BOOK_ADDED } from './queries';
 import Recommended from './components/Recommended';
 
 const App = () => {
@@ -20,6 +20,15 @@ const App = () => {
   const client = useApolloClient()
 
   const result = useQuery(ALL_BOOKS)
+
+  useSubscription(BOOK_ADDED, {
+    onData: ( ({ data }) => {
+      console.log(data)
+      const title = data.data.bookAdded.title
+      const author = data.data.bookAdded.author.name
+      window.alert(`${title} by ${author} added`)
+    })
+  })
 
   const notify  = message => {
     setErrorMessage(message)
