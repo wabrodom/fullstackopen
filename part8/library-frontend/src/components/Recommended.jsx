@@ -22,7 +22,7 @@ const Recommended = () => {
     return null
   } 
 
-  // resultFilterBooks.refetch()
+  resultFilterBooks.refetch()
 
   return (
     <div>

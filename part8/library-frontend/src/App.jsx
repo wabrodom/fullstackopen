@@ -22,11 +22,17 @@ const App = () => {
   const result = useQuery(ALL_BOOKS)
 
   useSubscription(BOOK_ADDED, {
-    onData: ( ({ data }) => {
-      console.log(data)
+    onData: ( ({ data, client }) => {
+      const addedBook = data.data.bookAdded
       const title = data.data.bookAdded.title
       const author = data.data.bookAdded.author.name
-      window.alert(`${title} by ${author} added`)
+      window.alert(`'${title}' by ${author} added`)
+
+      client.cache.updateQuery({ query: ALL_BOOKS}, data => {
+        return {
+          allBooks: data.allBooks.concat(addedBook)
+        }
+      })
     })
   })
 
