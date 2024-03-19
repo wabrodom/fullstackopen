@@ -48,7 +48,19 @@ const resolvers = {
     },
 
     allAuthors: async () => {
-      return Author.find({})
+      const allTheauthors = await Author.aggregate([
+        {  
+          $project: {
+            name: 1,
+            born: 1,
+            books: 1,
+            bookCount: {$size:"$books"}
+          } 
+        }
+      ])
+
+      await Author.populate(allTheauthors, {path: 'books'})
+      return allTheauthors
     },
 
     me: (root, args, context) => {
@@ -96,6 +108,8 @@ const resolvers = {
 
         try {
           await book.save()
+          newAuthor.books = newAuthor.books.concat(book._id)
+          await newAuthor.save()
         } catch (error) {
           throw new GraphQLError('save book failed', {
             extensions: {
@@ -118,6 +132,8 @@ const resolvers = {
 
       try {
         await book.save()
+        foundAuthor.books = foundAuthor.books.concat(book._id)
+        await foundAuthor.save()
       } catch (error) {
         throw new GraphQLError('save book falied, The book name is at least 5 characters', {
           extensions: {
@@ -204,6 +220,14 @@ const resolvers = {
 
       const userForToken = { username: user.username, id: user._id}
       return { value: jwt.sign(userForToken, config.JWT_SECRET)}
+    },
+    clearBook: async() => {
+      await Book.deleteMany({})
+      return Book.collection.countDocuments()
+    },
+    clearAuthor: async() => {
+      await Author.deleteMany({})
+      return Author.collection.countDocuments()
     }
   },
 

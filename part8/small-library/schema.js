@@ -3,6 +3,8 @@ const typeDefs = `
   type Author {
     name: String!
     born: Int
+    books: [Book]
+    bookCount: Int
   }
 
   type Book {
@@ -11,12 +13,6 @@ const typeDefs = `
     published: Int!
     genres: [String!]!
     id: ID!
-  }
-
-  type AllAuthors {
-    name: String!
-    born: Int
-    bookCount: Int!
   }
 
   type User {
@@ -58,6 +54,9 @@ const typeDefs = `
       username: String!
       password: String!
     ): Token
+
+    clearBook: Int!
+    clearAuthor: Int!
   }
 
   type Subscription {

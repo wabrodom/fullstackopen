@@ -12,11 +12,11 @@ const Authors = ({ setError, authorAndBookCount }) => {
   }
   const authors = result.data.allAuthors
 
-  const authorBookCount = (array, name) => {
-    const foundAuthor = array.find(obj => obj.name === name)
+  // const authorBookCount = (array, name) => {
+  //   const foundAuthor = array.find(obj => obj.name === name)
 
-    return foundAuthor.bookCount
-  } 
+  //   return foundAuthor.bookCount
+  // } 
 
   return (
     <div>
@@ -33,7 +33,7 @@ const Authors = ({ setError, authorAndBookCount }) => {
             <tr key={a.name}>
               <td>{a.name}</td>
               <td>{a.born}</td>
-              <td>{authorBookCount(authorAndBookCount, a.name)}</td>
+              <td>{a.bookCount}</td>
             </tr>
           ))}
         </tbody>
