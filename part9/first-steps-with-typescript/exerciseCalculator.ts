@@ -8,12 +8,14 @@ interface exerciseResult {
   average: number;
 }
 
-const calculateExercises  = (hours: number[], target: number): exerciseResult => {
-  const periodLength: number = hours.length;
-  const trainingDays: number = hours.filter(h => h !== 0).length;
-  const totalHours: number =  hours.reduce((acc, curr) => acc + curr, 0);
+const calculateExercises  = (hours: number[]): exerciseResult => {
+  const [target, ...perDayHours] = hours;
+
+  const periodLength: number = perDayHours.length;
+  const trainingDays: number = perDayHours.filter((h) => h !== 0).length;
+  const totalHours: number =  perDayHours.reduce((acc, curr) => acc + curr, 0);
   const average: number = totalHours / periodLength;
-  const success: boolean = average > target;
+  const success: boolean = average >= target;
 
   let rating:number = 0
   let ratingDescription:string = ''
@@ -26,7 +28,7 @@ const calculateExercises  = (hours: number[], target: number): exerciseResult =>
     ratingDescription = 'You meet your target'
   } else {
     rating = 1
-    ratingDescription = 'below your goal, could be better'
+    ratingDescription = 'below your goal,but you could be better'
   }
 
   return {
@@ -41,6 +43,30 @@ const calculateExercises  = (hours: number[], target: number): exerciseResult =>
   
 }
 
+const parseUseValues = (args: string[]): number[] => {
 
-let input = [3, 0, 2, 4.5, 0, 3, 1]
-console.log(calculateExercises(input, 2))
+  if (args.length < 4) throw new Error('Not enough arguments');
+
+  const useValues = []
+  for (let i = 2; i < args.length; i++) {
+    if ( isNaN(Number(args[i])) ) {
+      throw new Error('Some provided values were not numbers!');
+    }
+    useValues.push(Number(args[i]))
+  }
+  return useValues
+}
+
+
+try {
+  const array = parseUseValues(process.argv)
+  const message = calculateExercises(array)
+  console.log('your input: ', array)
+  console.log(message)
+} catch (error) {
+  let errorMessage = 'Something went wrong. '
+  if (error instanceof Error) {
+    errorMessage += 'Error: ' + error.message
+  }
+  console.log(errorMessage)
+}
