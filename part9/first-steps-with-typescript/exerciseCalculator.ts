@@ -1,3 +1,5 @@
+import { isNotNumber } from "./utils";
+
 interface exerciseResult {
   periodLength: number;
   trainingDays: number;
@@ -43,13 +45,13 @@ const calculateExercises  = (hours: number[]): exerciseResult => {
   
 }
 
-const parseUseValues = (args: string[]): number[] => {
+const parseArgument = (args: string[]): number[] => {
 
   if (args.length < 4) throw new Error('Not enough arguments');
 
   const useValues = []
   for (let i = 2; i < args.length; i++) {
-    if ( isNaN(Number(args[i])) ) {
+    if ( isNotNumber(args[i]) ) {
       throw new Error('Some provided values were not numbers!');
     }
     useValues.push(Number(args[i]))
@@ -59,7 +61,7 @@ const parseUseValues = (args: string[]): number[] => {
 
 
 try {
-  const array = parseUseValues(process.argv)
+  const array = parseArgument(process.argv)
   const message = calculateExercises(array)
   console.log('your input: ', array)
   console.log(message)
