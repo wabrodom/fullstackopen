@@ -7,7 +7,7 @@ const calculateBmi = (height: number, weight: number): number => {
   } 
 
   const bmi:number = weight / Math.pow(height/100 , 2);
-  return bmi
+  return +bmi.toFixed(2)
 }
 
 const bmiMessage = (bmi: number): string => {
@@ -27,34 +27,52 @@ const showBmi = (height: number, weight: number):string => {
   return bmiMessage(bmi);
 }
 
-interface heightWeight {
-  height: number;
-  weight: number;
-}
+// interface heightWeight {
+//   height: number;
+//   weight: number;
+// }
 
-const parseArgument = (args: string[]): heightWeight => {
-  if (args.length < 4) throw new Error('Not enough arguments');
-  if (args.length > 4) throw new Error('Too many arguments');
+// const parseArgument = (args: string[]): heightWeight => {
+//   if (args.length < 4) throw new Error('Not enough arguments');
+//   if (args.length > 4) throw new Error('Too many arguments');
 
-  if (!isNaN(Number(args[2])) && !isNaN(Number(args[3]))) {
-    return {
-      height: Number(args[2]),
-      weight: Number(args[3])
+//   if (!isNaN(Number(args[2])) && !isNaN(Number(args[3]))) {
+//     return {
+//       height: Number(args[2]),
+//       weight: Number(args[3])
+//     }
+//   } else {
+//     throw new Error('Provided values were not numbers!');
+//   }
+// }
+
+
+// try {
+//   const { height, weight } = parseArgument(process.argv);
+
+//   console.log(showBmi(height, weight));
+// } catch(error) {
+//   let errorMessage = 'Something went wrong! '
+//   if (error instanceof Error) {
+//     errorMessage += error.message
+//   }
+//   console.log(errorMessage)
+// }
+
+export const bmiApi = (height: string, weight: string): string => {
+  try {
+    const nHeight = Number(height);
+    const nWeight = Number(weight);
+
+    const result = showBmi(nHeight, nWeight);
+    return result;
+  } catch(error) {
+    let errorMessage = 'Something went wrong! '
+    if (error instanceof Error) {
+      errorMessage += error.message
     }
-  } else {
-    throw new Error('Provided values were not numbers!');
+    console.log(errorMessage)
+    return errorMessage
   }
-}
 
-
-try {
-  const { height, weight } = parseArgument(process.argv);
-
-  console.log(showBmi(height, weight));
-} catch(error) {
-  let errorMessage = 'Something went wrong! '
-  if (error instanceof Error) {
-    errorMessage += error.message
-  }
-  console.log(errorMessage)
 }
