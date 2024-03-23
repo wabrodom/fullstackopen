@@ -1,5 +1,5 @@
-console.log("BMI calculator")
-console.log("Enter the height (cm) and weight (kg)")
+console.log("BMI calculator");
+console.log("Enter the height (cm) and weight (kg)");
 
 const calculateBmi = (height: number, weight: number): number => {
   if (height <= 0) {
@@ -7,8 +7,8 @@ const calculateBmi = (height: number, weight: number): number => {
   } 
 
   const bmi:number = weight / Math.pow(height/100 , 2);
-  return +bmi.toFixed(2)
-}
+  return +bmi.toFixed(2);
+};
 
 const bmiMessage = (bmi: number): string => {
   if (bmi < 18.5) {
@@ -20,12 +20,12 @@ const bmiMessage = (bmi: number): string => {
   } else {
     return `${bmi} : Obese`;
   }
-}
+};
 
 const showBmi = (height: number, weight: number):string => {
-  let bmi:number = calculateBmi(height, weight);
+  const bmi:number = calculateBmi(height, weight);
   return bmiMessage(bmi);
-}
+};
 
 // interface heightWeight {
 //   height: number;
@@ -67,12 +67,12 @@ export const bmiApi = (height: string, weight: string): string => {
     const result = showBmi(nHeight, nWeight);
     return result;
   } catch(error) {
-    let errorMessage = 'Something went wrong! '
+    let errorMessage = 'Something went wrong! ';
     if (error instanceof Error) {
-      errorMessage += error.message
+      errorMessage += error.message;
     }
-    console.log(errorMessage)
-    return errorMessage
+    console.log(errorMessage);
+    return errorMessage;
   }
 
-}
+};
