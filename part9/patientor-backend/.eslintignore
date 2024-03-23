@@ -1,0 +1,6 @@
+build
+disc
+.eslintrc
+node_modules
+
+.env
