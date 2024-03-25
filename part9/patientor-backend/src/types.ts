@@ -4,4 +4,4 @@ export interface Diagnosis {
   latin?: string;
 }
 
-export type DiagnosesWithoutLatin = Pick<Diagnosis, 'code' | 'name'>;
+export type DiagnoseWithoutLatin = Pick<Diagnosis, 'code' | 'name'>;
